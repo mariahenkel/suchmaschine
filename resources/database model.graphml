@@ -38,7 +38,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.small_entity">
-          <y:Geometry height="40.0" width="80.0" x="304.5351192217745" y="-268.8384046381057"/>
+          <y:Geometry height="40.0" width="80.0" x="250.77313813822047" y="-329.96125909095696"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="31.03515625" x="24.482421875" y="10.93359375">Wort<y:LabelModel>
@@ -58,7 +58,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.relationship">
-          <y:Geometry height="56.0" width="90.0" x="19.892340604461893" y="-190.52379558352217"/>
+          <y:Geometry height="56.0" width="90.0" x="-1.6987107209908245" y="-223.25623766419233"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="71.453125" x="9.2734375" y="18.93359375">besteht aus<y:LabelModel>
@@ -78,7 +78,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="118.98557024504808" y="53.13404442430951"/>
+          <y:Geometry height="40.0" width="80.0" x="-222.51353674781333" y="-101.78513864880709"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="73.99609375" x="3.001953125" y="10.93359375">HTML-Code<y:LabelModel>
@@ -98,7 +98,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="-104.8923406044622" y="142.52379558352206"/>
+          <y:Geometry height="40.0" width="80.0" x="-96.15122590398141" y="171.95582780806643"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="26.30078125" x="26.849609375" y="10.93359375">URL<y:LabelModel>
@@ -118,7 +118,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="-198.98557024504814" y="53.13404442430941"/>
+          <y:Geometry height="40.0" width="80.0" x="-190.74941983183234" y="111.43291985026414"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="29.69921875" x="25.150390625" y="10.93359375">Titel<y:LabelModel>
@@ -138,10 +138,10 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="-205.63510887974155" y="-76.48017976596888"/>
+          <y:Geometry height="40.0" width="80.0" x="-237.81692211380712" y="9.469735754159128"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" underlinedText="true" visible="true" width="17.494140625" x="31.2529296875" y="10.93359375">ID<y:LabelModel>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" underlinedText="true" visible="true" width="17.494140625" x="31.2529296875" y="10.933593750000004">ID<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -158,7 +158,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="567.3240700916118" y="-251.6408294911736"/>
+          <y:Geometry height="40.0" width="80.0" x="502.18950684449726" y="-378.51156001964694"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="bold" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" underlinedText="true" visible="true" width="17.494140625" x="31.2529296875" y="10.93359375">ID<y:LabelModel>
@@ -178,7 +178,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="108.86566687086727" x="586.4667398411234" y="-128.38697787985012"/>
+          <y:Geometry height="40.0" width="108.86566687086727" x="542.8968228363055" y="-276.31480983018906"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="105.98828125" x="1.438692810433622" y="10.93359375">gestemmtes Wort<y:LabelModel>
@@ -198,7 +198,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="517.2382192467719" y="-354.6424465167061"/>
+          <y:Geometry height="40.0" width="80.0" x="439.1015660621434" y="-459.2740481713"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="55.890625" x="12.0546875" y="10.93359375">Stopwort<y:LabelModel>
@@ -218,7 +218,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="449.85104418441824" y="-447.25396956779133"/>
+          <y:Geometry height="40.0" width="80.0" x="364.1039339807315" y="-529.116892806845"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="31.03515625" x="24.482421875" y="10.93359375">Wort<y:LabelModel>
@@ -238,7 +238,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="103.95971223021581" x="346.6648285211609" y="-533.4027808760386"/>
+          <y:Geometry height="40.0" width="103.95971223021581" x="257.1702803880356" y="-591.7745999081174"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="97.234375" x="3.362668615107907" y="10.93359375">gesamte Anzahl<y:LabelModel>
@@ -258,7 +258,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="58.09675593143851" y="-433.5239128221339"/>
+          <y:Geometry height="40.0" width="80.0" x="10.117944115640235" y="-442.0345858784817"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="29.6875" x="25.15625" y="10.93359375">WDF<y:LabelModel>
@@ -278,7 +278,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="-162.6004232858312" y="-426.9325941850014"/>
+          <y:Geometry height="40.0" width="80.0" x="-195.67238534564706" y="-415.46315686900135"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="77.353515625" x="1.3232421875" y="10.93359375">Satznummer<y:LabelModel>
@@ -298,7 +298,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="-52.687347981266015" y="-444.8105827321187"/>
+          <y:Geometry height="40.0" width="80.0" x="-94.42375607899737" y="-441.5009546540242"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="50.365234375" x="14.8173828125" y="10.93359375">Position<y:LabelModel>
@@ -318,7 +318,7 @@
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="39.0" width="117.0" x="-296.8110119728424" y="-371.39893658901525"/>
+          <y:Geometry height="39.0" width="117.0" x="-320.2956502246729" y="-354.29551598466895"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="32.265625" modelName="custom" textColor="#000000" visible="true" width="101.763671875" x="7.6181640625" y="3.3671875">bisherige Anzahl
@@ -339,7 +339,7 @@ Stopworte<y:LabelModel>
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="252.58683603286062" y="-600.4247956284087"/>
+          <y:Geometry height="40.0" width="80.0" x="164.72631161714799" y="-636.9174477445409"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="22.87890625" x="28.560546875" y="10.93359375">IDF<y:LabelModel>
@@ -359,10 +359,50 @@ Stopworte<y:LabelModel>
       <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
-          <y:Geometry height="40.0" width="80.0" x="24.892340604461978" y="142.52379558352214"/>
+          <y:Geometry height="40.0" width="80.0" x="16.15122590398157" y="171.95582780806637"/>
           <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="66.25" x="6.875" y="10.93359375">Thumbnail<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:StyleProperties>
+            <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+          </y:StyleProperties>
+        </y:GenericNode>
+      </data>
+    </node>
+    <node id="n18">
+      <data key="d5"/>
+      <data key="d6">
+        <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
+          <y:Geometry height="40.0" width="80.0" x="110.7494198318324" y="111.43291985026406"/>
+          <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="76.404296875" x="1.7978515625" y="10.93359375">Rankingwert<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:StyleProperties>
+            <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+          </y:StyleProperties>
+        </y:GenericNode>
+      </data>
+    </node>
+    <node id="n19">
+      <data key="d5"/>
+      <data key="d6">
+        <y:GenericNode configuration="com.yworks.entityRelationship.attribute">
+          <y:Geometry height="40.0" width="108.86566687086727" x="144.9026588357969" y="-3.7100791596097196"/>
+          <y:Fill color="#E8EEF7" color2="#B7C9E3" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" textColor="#000000" visible="true" width="101.962890625" x="3.451388122933622" y="10.93359375">Unusability-Wert<y:LabelModel>
               <y:SmartNodeLabelModel distance="4.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -382,6 +422,14 @@ Stopworte<y:LabelModel>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="28.97265625" x="-15.6723117092771" y="-142.28251520630658">[0,*]<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="left" ratio="1.0" segment="-1"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -391,16 +439,23 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="76.16520288643596" y="-173.74459320674129"/>
-            <y:Point x="101.11852629118371" y="-194.390295265207"/>
-            <y:Point x="129.0933469576983" y="-212.37178787063516"/>
-            <y:Point x="176.16362396286183" y="-233.68499872763266"/>
-            <y:Point x="228.50003298328014" y="-247.38270362874528"/>
-            <y:Point x="285.0200027876187" y="-252.6558227964533"/>
-            <y:Point x="324.44113313435423" y="-251.1557566656095"/>
+            <y:Point x="53.30966793481026" y="-207.31819314987834"/>
+            <y:Point x="75.86006112067427" y="-230.00007887611162"/>
+            <y:Point x="115.68341897928916" y="-259.78161443462903"/>
+            <y:Point x="162.06495032240463" y="-283.51017315653155"/>
+            <y:Point x="214.15453940144016" y="-300.1905990429364"/>
+            <y:Point x="270.9707798464139" y="-308.9408768286843"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.1328125" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" visible="true" width="28.97265625" x="21.694732507873397" y="-2.908155774304987">[0,*]<y:LabelModel>
+              <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartEdgeLabelModelParameter angle="0.0" distance="30.0" distanceToCenter="true" position="right" ratio="0.5" segment="0"/>
+            </y:ModelParameter>
+            <y:PreferredPlacementDescriptor angle="0.0" angleOffsetOnRightSide="0" angleReference="absolute" angleRotationOnRightSide="co" distance="-1.0" frozen="true" placement="anywhere" side="anywhere" sideReference="relative_to_edge_flow"/>
+          </y:EdgeLabel>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
@@ -410,11 +465,11 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="360.1967180047413" y="-247.1625968251686"/>
-            <y:Point x="423.7730161437812" y="-234.25683465678514"/>
-            <y:Point x="487.8251936560955" y="-211.19364980915367"/>
-            <y:Point x="566.4488214994062" y="-167.83305645194056"/>
-            <y:Point x="626.475823897676" y="-121.54645485034274"/>
+            <y:Point x="306.5493954344459" y="-312.1437459869663"/>
+            <y:Point x="355.2929231703666" y="-315.2648707754418"/>
+            <y:Point x="440.14972050918357" y="-308.5036037645064"/>
+            <y:Point x="527.4409277282679" y="-286.01760043246315"/>
+            <y:Point x="579.9358142214447" y="-264.7275984541655"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -427,10 +482,10 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="361.12555692244536" y="-251.37289459576516"/>
-            <y:Point x="429.24979322256956" y="-256.40712747188064"/>
-            <y:Point x="517.401391281427" y="-250.8401887657632"/>
-            <y:Point x="589.2798728155256" y="-236.58873915408145"/>
+            <y:Point x="305.98596549326555" y="-316.1844223252532"/>
+            <y:Point x="402.4327933549098" y="-344.8881656893499"/>
+            <y:Point x="506.28907413492897" y="-357.87060987401077"/>
+            <y:Point x="524.1710122981165" y="-358.42677057715395"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -443,8 +498,8 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="363.11421146466677" y="-258.02678445949937"/>
-            <y:Point x="537.191572484988" y="-328.25705444049316"/>
+            <y:Point x="306.9834875476467" y="-322.78613730951884"/>
+            <y:Point x="461.10284191771325" y="-428.6159685712274"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -457,8 +512,8 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="358.92906912290374" y="-263.81750397705133"/>
-            <y:Point x="477.8711304653254" y="-409.8373604329344"/>
+            <y:Point x="302.3206776660119" y="-327.1573931942835"/>
+            <y:Point x="395.0771696012076" y="-490.14437607580663"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -471,10 +526,10 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="351.2987773998475" y="-263.37245092002775"/>
-            <y:Point x="378.7572178534107" y="-340.5963307919567"/>
-            <y:Point x="394.8465330039536" y="-424.4217395834099"/>
-            <y:Point x="398.9069894378378" y="-495.26731941840336"/>
+            <y:Point x="295.4762209416896" y="-326.0273038535543"/>
+            <y:Point x="311.81293031829165" y="-409.87522062979144"/>
+            <y:Point x="314.79304539724353" y="-516.653015639635"/>
+            <y:Point x="311.5711058537341" y="-553.306828077407"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -531,9 +586,8 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="70.38477513847201" y="-182.74757966427674"/>
-            <y:Point x="95.04708279333164" y="-328.1800773410669"/>
-            <y:Point x="98.09729457873857" y="-392.0811334925166"/>
+            <y:Point x="45.77060214228534" y="-215.65077924993193"/>
+            <y:Point x="51.35713078927307" y="-401.2723139097463"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -546,12 +600,11 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="66.18432401526242" y="-179.87703123454608"/>
-            <y:Point x="64.60454292133828" y="-232.87127519662604"/>
-            <y:Point x="54.70340081833864" y="-286.49080680425436"/>
-            <y:Point x="36.39469812972477" y="-339.7227355641028"/>
-            <y:Point x="9.702630283745213" y="-391.54646817888"/>
-            <y:Point x="-1.037535442376572" y="-408.3320151926822"/>
+            <y:Point x="41.543970293935445" y="-212.03999805959856"/>
+            <y:Point x="31.42666172069299" y="-262.41056325651857"/>
+            <y:Point x="14.030613701570816" y="-312.18486811368246"/>
+            <y:Point x="-10.591791073751777" y="-360.5587467809057"/>
+            <y:Point x="-42.30888879306429" y="-406.7339848841111"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -564,14 +617,13 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="63.543912155815164" y="-177.10325965304705"/>
-            <y:Point x="57.97089636037874" y="-206.4905237390103"/>
-            <y:Point x="48.52332318561326" y="-235.84965071872298"/>
-            <y:Point x="35.18632250960729" y="-264.7775374062122"/>
-            <y:Point x="7.9485458665462305" y="-306.47589071268965"/>
-            <y:Point x="-27.743362327041915" y="-344.93873321142866"/>
-            <y:Point x="-71.46321206618015" y="-378.8450204072757"/>
-            <y:Point x="-104.77558602801406" y="-398.29134592666736"/>
+            <y:Point x="38.87538097905073" y="-209.66162121660014"/>
+            <y:Point x="27.15853579061389" y="-238.1623899114048"/>
+            <y:Point x="11.641230674994723" y="-265.921784070394"/>
+            <y:Point x="-18.629675295937805" y="-305.3145083994509"/>
+            <y:Point x="-56.97972498192197" y="-340.8585327004254"/>
+            <y:Point x="-102.89080664271218" y="-371.30181658838893"/>
+            <y:Point x="-137.3645869075506" y="-388.1766907918334"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -584,17 +636,14 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="-217.90118577151313" y="-350.6003061366508"/>
-            <y:Point x="-157.36441287582244" y="-342.20766034455573"/>
-            <y:Point x="-81.83992150954039" y="-320.84052765434416"/>
-            <y:Point x="-32.24528705852179" y="-298.2620348997061"/>
-            <y:Point x="-3.5448858698169787" y="-279.55715041828194"/>
-            <y:Point x="20.835322876529595" y="-257.04723607979435"/>
-            <y:Point x="31.159914343374304" y="-244.63841840434378"/>
-            <y:Point x="40.1549971367748" y="-231.63353331187304"/>
-            <y:Point x="47.78752833105446" y="-218.17184607440387"/>
-            <y:Point x="54.04986079928414" y="-204.3945865644433"/>
-            <y:Point x="62.553289730862545" y="-176.44258690193803"/>
+            <y:Point x="-242.2800995491836" y="-335.20949969338454"/>
+            <y:Point x="-165.10181266779583" y="-329.81277403860616"/>
+            <y:Point x="-93.42420354075054" y="-313.44387913262455"/>
+            <y:Point x="-46.210342429707026" y="-294.32390177584466"/>
+            <y:Point x="-18.692130874327923" y="-276.9101606552802"/>
+            <y:Point x="4.793787086497609" y="-256.12581266757036"/>
+            <y:Point x="23.73104005752767" y="-232.82461665306656"/>
+            <y:Point x="37.9381740397128" y="-207.96780094347858"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -607,11 +656,11 @@ Stopworte<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="301.08224069667455" y="-563.3391934146512"/>
-            <y:Point x="328.61571068016684" y="-494.5207550691567"/>
-            <y:Point x="348.7707190099783" y="-408.98072761593886"/>
-            <y:Point x="353.73010924157416" y="-326.3074812442154"/>
-            <y:Point x="347.4450424122316" y="-263.81054755858906"/>
+            <y:Point x="214.74774757139758" y="-600.9400165806649"/>
+            <y:Point x="241.09116019711934" y="-552.304148472022"/>
+            <y:Point x="272.62689578256624" y="-470.08617948114056"/>
+            <y:Point x="288.97699632347076" y="-388.5255839592531"/>
+            <y:Point x="291.5366660802455" y="-325.32660091293394"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="none"/>
@@ -620,6 +669,28 @@ Stopworte<y:LabelModel>
       </data>
     </edge>
     <edge id="e16" source="n0" target="n17">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e17" source="n19" target="n0">
+      <data key="d9"/>
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="none" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e18" source="n18" target="n0">
       <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
