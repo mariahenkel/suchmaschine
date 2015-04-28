@@ -22,5 +22,13 @@ def get_top_1million_websites():
                 in top1mCSV.split("\n")if row != ""]
 
 
+def get_websites_from_txt(filename):
+    filepath = path.join(pardir, "data", filename)
+    if path.exists(filepath):
+        with open(filepath, 'rb') as uglysites:
+            return [line.strip('\n') for line in uglysites.readlines()]
+
+
 if __name__ == "__main__":
-    get_top_1million_websites()
+    print len(get_top_1million_websites())
+    print len(get_websites_from_txt('uglysites.txt'))
