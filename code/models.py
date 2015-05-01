@@ -11,10 +11,9 @@ Base = declarative_base()
 
 class Document(Base):
 
-	"""
- Class Document
-
-"""
+    """
+    Class Document
+    """
     __tablename__ = 'document'
     documentid = Column(Integer, primary_key=True)
     url = Column(String(500))
@@ -43,13 +42,12 @@ class Document(Base):
     popup = Column(Boolean)
     flash = Column(Boolean)
     overall_score = Column(Float)
-    wordlists = relationship('Consists_of', backref='document')
-
-
+    wordlists = relationship('ConsistsOf', backref='document')
 
 
 class Wordlist(Base):
-	"""
+
+    """
  Class wordlist
 
 """
@@ -62,11 +60,9 @@ class Wordlist(Base):
     idf = Column(Float)
 
 
-
-
-
 class ConsistsOf(Base):
-	"""
+
+    """
  Relation ConsistsOf
 
 """
