@@ -1,15 +1,16 @@
+# -*- coding: utf-8 -*-
 import urllib2
 import zipfile
 from os import path, pardir
 
-from config import top1m_path
+from config import TOP1M_PATH
 
 
 def get_top_1million_websites():
     filepath = path.join(pardir, "data", "top-1m.csv.zip")
     # download the file from the web if there is no local file
     if not path.exists(filepath):
-        url = top1m_path
+        url = TOP1M_PATH
         download = urllib2.urlopen(url).read()
         with open(filepath, "wb") as output:
             output.write(download)

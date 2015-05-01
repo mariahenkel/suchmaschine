@@ -61,3 +61,4 @@ target/
 
 # ignore .env file
 .env
+*.db
