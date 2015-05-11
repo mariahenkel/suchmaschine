@@ -5,7 +5,7 @@ from link_collector import get_top_1million_websites, get_websites_from_txt
 
 
 class Website_spider(CrawlSpider):
-    name = "website_spider"
+    name = "basic_spider"
     # we 'start' with the top 1 million websites from the file.
     start_urls = get_top_1million_websites(
     ) + get_websites_from_txt(TXT_PATH)
