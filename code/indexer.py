@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import csv
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 from BeautifulSoup import BeautifulSoup
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
