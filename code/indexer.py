@@ -1,56 +1,44 @@
 # -*- coding: utf-8 -*-
-import csv
+# 
+#import csv
+# Encoding für die Datei
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
-from BeautifulSoup import BeautifulSoup
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
+# Die folgende Zeile führt unter Linux zu einer Fehlermeldung. Bitte ggf. (ent)kommentieren.
+#from BeautifulSoup import BeautifulSoup
+# Import von BS und Comment 
 from bs4 import BeautifulSoup, Comment
+# Stoppwortliste
+from nltk.corpus import stopwords
+# Stemmer
+from nltk.stem import PorterStemmer
 
-
-
-#llllllll
+# Öffnen der Datei/Seite
 soup = BeautifulSoup(open("index.html"))
+# Entfernen der Kommentare
 for child in soup.body:
     if isinstance(child,Comment):
         child.extract()
 
-#soup.encode('utf-8')
-#invalid_tags = ['b','div', 'i', 'p', 'ul', 'li', 'ol', 'h1', 'h2', 'h3', 'pre', 'code','a', 'blockquote', 'strong', 'em']
-
-#BeautifulSoup(soupex, convertEntities=BeautifulSoup.HTML_ENTITIES)
-#soup.html.replaceWith(u'<html>'+unicode('utf-8')+u'</html>')
-
-#soups = BeautifulSoup.(soup.decode('utf-8','ignore'))
-
-
-#test=soup.find('body')					
-#for tag in invalid_tags: 
- #   for match in test.findAll(tag):
-  #      match.replaceWithChildren()
+# Übergabe des Bodys
 body_texts = soup.body(text=True)
 
-
-
+# Listenerstellung
 liste=[]
 for element in body_texts:
 	liste.append(element)
 
-
-
-#for element in liste:
-#	if element =="<body>" or "</body>":
-#		liste.remove(element)
-#	else:
-#		pass
-
+# Liste entfernen???
 reine_textdatei=" ".join(liste).lower()
 
-
+# Datei öffnen und mit Daten füllen
 with open("extrahier.txt", "a") as datei:
 	for element in reine_textdatei:
 		datei.write(element)
+
+#---------------------------------------------------------  
+# Ab hier Stemming / Stoppworterkennung
 #---------------------------------------------------------
 
 #Worte extrahieren 
