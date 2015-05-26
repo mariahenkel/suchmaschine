@@ -52,18 +52,22 @@ stop=stopwords.words('english')
 dict={}
 
 for element in worteextrahieren:
-	if element not in dict.keys():
-		stemmer=PorterStemmer()
-		gestemmtes_wort= stemmer.stem(element)
-		if element in stop:
-			dict[element]=[1,True, gestemmtes_wort]
+	try:
+		if element not in dict.keys():
+			stemmer=PorterStemmer()
+			gestemmtes_wort= stemmer.stem(element)
+
+			if element in stop:
+				dict[element]=[1,True, gestemmtes_wort]
+			else:
+				dict[element]=[1,False, gestemmtes_wort]
 		else:
-			dict[element]=[1,False, gestemmtes_wort]
-	else:
-		haufigkeit=worteextrahieren.count(element)
-		if element in stop:
-			dict[element]=[haufigkeit, True, gestemmtes_wort]
-		else:
-			dict[element]=[haufigkeit, False, gestemmtes_wort]
+			haufigkeit=worteextrahieren.count(element)
+			if element in stop:
+				dict[element]=[haufigkeit, True, gestemmtes_wort]
+			else:
+				dict[element]=[haufigkeit, False, gestemmtes_wort]
+	except:
+		pass
 
 print dict
