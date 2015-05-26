@@ -21,11 +21,18 @@ for child in soup.body:
     if isinstance(child,Comment):
         child.extract()
 
-# TO DO: Es müssen noch Satzzeichen und andere Störfaktoren entfert werden!
-
 # Übergabe des Textes und Erstellung einer Wortliste zur Weiterverarbeitung
 body_text = soup.body.getText()
-word_list = body_text.lower().split( ) # Hier geht die Reihenfolge verloren!!!
+
+#Es müssen noch Satzzeichen und andere Störfaktoren entfert werden
+char_dict = {'?':'', '!':'', '-':'', ';':'', ':':'', '.':'', '...':'', '\n':' '}
+for i, j in char_dict.iteritems():
+    body_text = body_text.replace(i, j)
+
+
+word_list = body_text.lower().split( ) 
+
+
 
 #---------------------------------------------------------  
 # Ab hier Stemming / Stoppworterkennung
@@ -34,25 +41,22 @@ word_list = body_text.lower().split( ) # Hier geht die Reihenfolge verloren!!!
 #Anzahl der Worte, Stoppwortmarkierung und gestemmtes Wort werden angezeigt
 
 stop=stopwords.words('english')
-dict={}
+rdict={}
+
+word_id = 0
+stemmer=PorterStemmer()
 
 for element in word_list:
 	try:
-		if element not in dict.keys():
-			stemmer=PorterStemmer()
-			gestemmtes_wort= stemmer.stem(element)
-
-			if element in stop:
-				dict[element]=[1,True, gestemmtes_wort]
-			else:
-				dict[element]=[1,False, gestemmtes_wort]
+		word_stem = stemmer.stem(element)
+		word_count=word_list.count(element)
+		if element in stop:
+			is_stop = True
 		else:
-			haufigkeit=word_list.count(element)
-			if element in stop:
-				dict[element]=[haufigkeit, True, gestemmtes_wort]
-			else:
-				dict[element]=[haufigkeit, False, gestemmtes_wort]
+			is_stop = False
+		rdict[word_id]=[element,word_count,is_stop,word_stem]
+		word_id = word_id+1
 	except:
 		pass
 
-print dict
+print rdict
