@@ -9,6 +9,12 @@ from bs4 import BeautifulSoup, Comment # BeautifulSoup und Comment
 from nltk.corpus import stopwords # Stoppwortliste
 from nltk.stem import PorterStemmer # Stemmer
 
+#SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy import MetaData, Table
+import config
+from models import Wordlist
+
 # Encoding für die Datei
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -25,11 +31,13 @@ for child in soup.body:
 body_text = soup.body.getText()
 
 #Es müssen noch Satzzeichen und andere Störfaktoren entfert werden
+# Könnte man noch andersherum machen: If not in a.....z: replace
+# Man könnte für ./?/! einen end_of_sentence_indicator einbauen und so die Sätze zählen
 char_dict = {'?':'', '!':'', '-':'', ';':'', ':':'', '.':'', '...':'', '\n':' '}
 for i, j in char_dict.iteritems():
     body_text = body_text.replace(i, j)
 
-
+#Den String aus dem Body-Text aufteilen in einzelne Wörter und alles klein schreiben
 word_list = body_text.lower().split( ) 
 
 
@@ -38,12 +46,12 @@ word_list = body_text.lower().split( )
 # Ab hier Stemming / Stoppworterkennung
 #---------------------------------------------------------
 
-#Anzahl der Worte, Stoppwortmarkierung und gestemmtes Wort werden angezeigt
+#Dokument-ID???, Wort, Wort-Stamm, Stoppwort(0/1), Position, Anzahl (für WDF/IDF)
 
 stop=stopwords.words('english')
 rdict={}
 
-word_id = 0
+word_pos = 0
 stemmer=PorterStemmer()
 
 for element in word_list:
@@ -51,12 +59,30 @@ for element in word_list:
 		word_stem = stemmer.stem(element)
 		word_count=word_list.count(element)
 		if element in stop:
-			is_stop = True
+			is_stop = 1
 		else:
-			is_stop = False
-		rdict[word_id]=[element,word_count,is_stop,word_stem]
-		word_id = word_id+1
+			is_stop = 0
+		rdict[word_pos]=[element,word_stem,is_stop,word_count]
+		word_pos = word_pos+1
 	except:
 		pass
 
 print rdict
+
+#---------------------------------------------------------  
+# Ab hier Einspeisung in die Datenbank
+#---------------------------------------------------------
+
+#Verbindung herstellen, Tabelle laden
+#Wordlist: id, word, stem, stopword, number, idf
+
+engine = create_engine(config.DB_URI, echo=True)
+metadata = MetaData(bind=engine)
+wordtable = Table("wordlist", metadata, autoload=True)
+
+ins = wordtable.insert()
+new_word = ins.values(word="clowns", stem="clown", stopword=0, number=1, idf=1)
+
+
+conn = engine.connect()
+conn.execute(new_word)
