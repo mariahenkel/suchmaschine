@@ -3,22 +3,22 @@ import urllib
 import re
 from bs4 import BeautifulSoup
 import requests
-from models import Document
+#from models import Document
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from config import DB_URI, DEBUG
+#from config import DB_URI, DEBUG
 
-Base = declarative_base()
+#Base = declarative_base()
 
 
 # Zum Testen:
-"""
+
 with open ("beispiel2.txt", "r") as html_file:
     html = html_file.read().lower()
     html_wo_comments = re.sub("<!--.*?>", "", html) # war für beispiel2.txt nötig
     soup = BeautifulSoup(html_wo_comments)
-"""
+
 
 ##########
 # Fonts  #
@@ -68,9 +68,13 @@ def font_amount():
                 #print font
                 fonts_counter += 1
     return fonts_counter
+    
+###############
+# Animationen #
+###############
 
 def get_html_textanimation(html_page):
-    marquee_amount = re.findall("<marquee(.)*</marquee>", str(html_page))  
+    marquee_amount = re.findall("<marquee(.)*</marquee>", str(html))  
     return len(marquee_amount)
 
 ##########
@@ -101,9 +105,27 @@ def find_bad_colors():
 ########## 
 
 def get_gifs ():
-    gif_amount = re.findall("<(.)*\.gif.*?>", str(html_page))
-    return len(gif_amount)
+    #gif_amount = re.findall("<(.)*\.gif.*?>", str(html))
+    #return len(gif_amount)
+    tag_attrs_lists = [] 
+    tag_attrs = [] 
+    for tag in soup.find_all(True):
+        tag_attrs_lists.append(tag.attrs.values())
+    for list in tag_attrs_lists:
+        for element in list:
+            tag_attrs.append(element)
+    return str(tag_attrs).count(".gif")
+    
+    
+    
+##################
+# Seitenstruktur #
+##################
 
+def bad_site_structure():
+    h_tags = ["h1","h2","h3","h4","h5","h6"]
+    return bool(soup.find_all([x for x in h_tags]))
+    
         
 ##########
 # W3C    #
@@ -160,6 +182,21 @@ def find_dead_links():
             dead_links +=1
 
     return dead_links
+    
+##########
+# Musik    #
+########## 
+
+def music():
+    auto_loop = False
+    check_audio_tag = soup.find_all("audio")
+    if "autoplay" in str(check_audio_tag):
+        auto_loop = True
+    elif "loop" in str(check_audio_tag):
+        auto_loop = True
+    
+    music_result = len(check_audio_tag),auto_loop
+    return music_result #Für das Schreiben in die Datenbank einfach mit Index zugreifen - [0] fuer das Attribut: Musik ist vorhanden, [1] fuer: Autoplay/Loop Attribut
 
 def write():
     some_engine = create_engine(DB_URI, echo=DEBUG)
@@ -167,22 +204,22 @@ def write():
     session = Session()
 
     write_document = Document(font_existing = bad_fonts), 
-        font_number = fonts, textanimation = marquee, 
-        colour = bad_colors, number_of_gifs = gifs, 
-        w3c = w3c_errors, guestbook = gb,
-        phrases = bad_phrases, deadlinks = dead_links)
+    font_number = fonts, textanimation = marquee, 
+    colour = bad_colors, number_of_gifs = gifs, 
+    w3c = w3c_errors, guestbook = gb,
+    phrases = bad_phrases, deadlinks = dead_links
 
     session.add(write_document)
     session.commit()
 
 
-
+"""
 if __name__ == "__main__":
     # Hier muss ne for-Schleife hin, die alle Dokumente in der DB durchläuft
     #for homepage in datenbank:
     #    quellcode = code aus datenbank
     #    url = url aus datenbank
-        with open (quellcode, "r") as html_file:
+    with open (quellcode, "r") as html_file:
         html = html_file.read().lower()
         html_wo_comments = re.sub("<!--.*?>", "", html) # war für beispiel2.txt nötig
         soup = BeautifulSoup(html_wo_comments)
@@ -199,7 +236,7 @@ if __name__ == "__main__":
 
         write()
 
-
+"""
 
 
 # Zum Testen:
@@ -210,7 +247,11 @@ print "Anzahl Schriftarten: ", font_amount()
 print "Guestbook ja/nein:", find_guestbook(html)
 print "Schlechte Phrasen: ", find_phrases(html)
 print "Tote Links: ", find_dead_links()
-print "Marquee: ", get_html_textanimation(html)
-print "Gif Amount: ", get_gifs(html)
+
+
 print "W3C Fehler: ", count_w3c_errors("http://prosieben.de")
 """
+#print "Gif Amount: ", get_gifs()
+#print "Marquee: ", get_html_textanimation(html)
+#print "Anzahl H-Tags: ", bad_site_structure()
+print "Music: ", music()
