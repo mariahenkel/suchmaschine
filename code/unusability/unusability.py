@@ -3,12 +3,22 @@ import urllib
 import re
 from bs4 import BeautifulSoup
 import requests
+from models import Document
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from config import DB_URI, DEBUG
+
+Base = declarative_base()
 
 
+# Zum Testen:
+"""
 with open ("beispiel2.txt", "r") as html_file:
     html = html_file.read().lower()
     html_wo_comments = re.sub("<!--.*?>", "", html) # war für beispiel2.txt nötig
-soup = BeautifulSoup(html_wo_comments)
+    soup = BeautifulSoup(html_wo_comments)
+"""
 
 ##########
 # Fonts  #
@@ -34,8 +44,13 @@ def find_bad_fonts():
             bad_fonts = 0
         else:
             bad_fonts = 1
+	# bad_fonts
     return bad_fonts
-
+    
+    #write_font_existing = Document(font_existing=find_bad_fonts())
+    #session.add(write_font_existing)
+    #session.commit()
+	
 def font_amount():
     tag_attrs_lists = [] 
     tag_attrs = [] 
@@ -85,7 +100,7 @@ def find_bad_colors():
 # Gifs   #
 ########## 
 
-def get_gifs (html_page):
+def get_gifs ():
     gif_amount = re.findall("<(.)*\.gif.*?>", str(html_page))
     return len(gif_amount)
 
@@ -109,8 +124,7 @@ def count_w3c_errors (url):
 ########## 
 
 
-# Sucht jetzt einfach im kompletten Code, aber dass guestbook einfach so in nem anderen Kontext vorkommt eher unwahrscheinlich?
-def find_guestbook(html):
+def find_guestbook():
     if "guestbook" in html:
         guestbook = 1
     else:
@@ -118,7 +132,7 @@ def find_guestbook(html):
     return guestbook
 
 
-def find_phrases(html):
+def find_phrases():
     with open("phrases.txt", "rb") as phrases_file:
         phrases_list = [line.rstrip("\n\r") for line in phrases_file]
     phrases_counter = 0 
@@ -147,7 +161,49 @@ def find_dead_links():
 
     return dead_links
 
+def write():
+    some_engine = create_engine(DB_URI, echo=DEBUG)
+    Session = sessionmaker(bind=some_engine)    
+    session = Session()
 
+    write_document = Document(font_existing = bad_fonts), 
+        font_number = fonts, textanimation = marquee, 
+        colour = bad_colors, number_of_gifs = gifs, 
+        w3c = w3c_errors, guestbook = gb,
+        phrases = bad_phrases, deadlinks = dead_links)
+
+    session.add(write_document)
+    session.commit()
+
+
+
+if __name__ == "__main__":
+    # Hier muss ne for-Schleife hin, die alle Dokumente in der DB durchläuft
+    #for homepage in datenbank:
+    #    quellcode = code aus datenbank
+    #    url = url aus datenbank
+        with open (quellcode, "r") as html_file:
+        html = html_file.read().lower()
+        html_wo_comments = re.sub("<!--.*?>", "", html) # war für beispiel2.txt nötig
+        soup = BeautifulSoup(html_wo_comments)
+        
+        bad_fonts = find_bad_fonts()
+        bad_colors = find_bad_colors()
+        fonts = font_amount()
+        gb = find_guestbook()
+        bad_phrases = find_phrases()
+        dead_links = find_dead_links()
+        mmarquee = get_html_textanimation()
+        gifs = get_gifs()
+        w3c_errors = count_w3c_errors(url)
+
+        write()
+
+
+
+
+# Zum Testen:
+"""
 print "Schlechte Schriftarten ja/nein: ", find_bad_fonts()
 print "Schlechte Farben: ", find_bad_colors()
 print "Anzahl Schriftarten: ", font_amount()
@@ -157,6 +213,4 @@ print "Tote Links: ", find_dead_links()
 print "Marquee: ", get_html_textanimation(html)
 print "Gif Amount: ", get_gifs(html)
 print "W3C Fehler: ", count_w3c_errors("http://prosieben.de")
-
-
-
+"""
