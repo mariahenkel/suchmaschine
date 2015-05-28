@@ -33,7 +33,7 @@ body_text = soup.body.getText()
 #Es müssen noch Satzzeichen und andere Störfaktoren entfert werden
 # Könnte man noch andersherum machen: If not in a.....z: replace
 # Man könnte für ./?/! einen end_of_sentence_indicator einbauen und so die Sätze zählen
-char_dict = {'?':'', '!':'', '-':'', ';':'', ':':'', '.':'', '...':'', '\n':' '}
+char_dict = {'?':'', '!':'', '-':'', ';':'', ':':'', '.':'', '...':'', '\n':' ', '/':'', '+':'', '<':'', '>':'', '}':'', '{':'', '=':'', ']':'', '[':''}
 for i, j in char_dict.iteritems():
     body_text = body_text.replace(i, j)
 
@@ -49,7 +49,7 @@ word_list = body_text.lower().split( )
 #Dokument-ID???, Wort, Wort-Stamm, Stoppwort(0/1), Position, Anzahl (für WDF/IDF)
 
 stop=stopwords.words('english')
-#rdict={}
+rdict={}
 
 #Verbindung herstellen, Tabelle laden
 engine = create_engine(config.DB_URI, echo=True)
@@ -67,14 +67,16 @@ for element in word_list:
 			is_stop = 1
 		else:
 			is_stop = 0
-		#rdict[word_pos]=[element,word_stem,is_stop,word_count]
+		rdict[word_pos]=[element,word_stem,is_stop,word_count]
 		#Daten einfügen
 		#Wordlist: id, word, stem, stopword, number, idf
-		wordtable.insert().execute(word=element, stem=word_stem, stopword=is_stop, number=word_pos, idf=word_count)
+		#wordtable.insert().execute(word=element, stem=word_stem, stopword=is_stop, number=word_pos, idf=word_count)
 		# Position weiterzählen
 		word_pos = word_pos+1
 	except:
 		pass
+
+print rdict
 
 
 
