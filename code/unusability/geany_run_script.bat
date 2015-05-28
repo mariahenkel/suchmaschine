@@ -1,4 +1,4 @@
-C:/users/ani/Anaconda/python  "unusability.py"
+python "unusability.py"
 
 pause
 del "%0"
