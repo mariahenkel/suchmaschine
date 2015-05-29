@@ -2,7 +2,7 @@
 from os import path, pardir
 
 # enable debug mode (verbose database, detailed logs etc.)
-DEBUG = True
+DEBUG = False
 
 # General settings
 BOT_NAME = "basic_crawler"
@@ -30,6 +30,8 @@ DB_URI = path.join("sqlite:///", pardir, "data", "search.db")
 
 # URL to alexa top1m dataset
 TOP1M_PATH = "http://s3.amazonaws.com/alexa-static/top-1m.csv.zip"
+# Limit the number of websites to crawl from the alexa dataset
+TOP1M_LIMIT = 100000
 
 # path to textfile with additional websites
 TXT_PATH = path.join(pardir, "data", "uglysites.txt")

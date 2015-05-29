@@ -6,7 +6,7 @@ from os import path, pardir
 from config import TOP1M_PATH
 
 
-def get_top_1million_websites():
+def get_top_1million_websites(limit=1000000):
     filepath = path.join(pardir, "data", "top-1m.csv.zip")
     # download the file from the web if there is no local file
     if not path.exists(filepath):
@@ -18,7 +18,7 @@ def get_top_1million_websites():
     with zipfile.ZipFile(filepath, "r") as top1m_file:
         # parse the file (append "http://www" to every entry and only pass
         # the url)
-        top1mCSV = top1m_file.read(top1m_file.namelist()[0], "r")
+        top1mCSV = top1m_file.read(top1m_file.namelist()[0], "r")[:limit]
         return ["http://www." + row.split(",")[1] for row
                 in top1mCSV.split("\n")if row != ""]
 
