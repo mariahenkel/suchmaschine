@@ -18,9 +18,10 @@ def get_top_1million_websites(limit=1000000):
     with zipfile.ZipFile(filepath, "r") as top1m_file:
         # parse the file (append "http://www" to every entry and only pass
         # the url)
-        top1mCSV = top1m_file.read(top1m_file.namelist()[0], "r")[:limit]
+        top1mCSV = top1m_file.read(
+            top1m_file.namelist()[0], "r").split('\n')[:limit]
         return ["http://www." + row.split(",")[1] for row
-                in top1mCSV.split("\n")if row != ""]
+                in top1mCSV if row != ""]
 
 
 def get_websites_from_txt(filename):
