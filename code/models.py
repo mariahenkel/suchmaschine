@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import (Column, Boolean, Integer, Text,
-                        ForeignKey, String, Float, BLOB)
+                        ForeignKey, String, Float, LargeBinary)
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
@@ -22,7 +22,7 @@ class Document(Base):
     title = Column(Text)
     ranking = Column(Float)
     html_document = Column(Text)
-    thumbnail = Column(BLOB)
+    thumbnail = Column(LargeBinary)
     number_of_gifs = Column(Integer)
     backgroundmusic = Column(Boolean)
     musicloop = Column(Boolean)
