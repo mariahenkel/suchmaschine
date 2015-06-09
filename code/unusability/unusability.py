@@ -123,8 +123,11 @@ def get_gifs ():
 ##################
 
 def bad_site_structure():
-    h_tags = ["h1","h2","h3","h4","h5","h6"]
-    return bool(soup.find_all([x for x in h_tags]))
+    bad_structure = True
+    structure_tags = ["h1","h2","h3","h4","h5","h6","header", "nav", "p", "div"] # p muss wahrscheinlich raus, zuviel benutzt
+    if len(soup.find_all([x for x in structure_tags]))>10:
+        bad_structure = False
+    return bad_structure
     
         
 ##########
@@ -188,16 +191,28 @@ def find_dead_links():
 ########## 
 
 def music():
+    audiofile_endings = [".mp3",".wav",".wma",".ogg",".mid"]
+    autoplay_loop_strings = ["autoplay","loop",".play("]
+    audio = False
     auto_loop = False
-    check_audio_tag = soup.find_all("audio")
-    if "autoplay" in str(check_audio_tag):
-        auto_loop = True
-    elif "loop" in str(check_audio_tag):
-        auto_loop = True
+    tag_content = []
+    for tag in soup.find_all(True):
+        tag_content.append(tag)
+    if any([extension in str(tag_content) for extension in audiofile_endings]):
+        audio = True
+        if any([item in str(tag_content) for item in autoplay_loop_strings]):
+            auto_loop = True
+            
+    return audio,auto_loop
     
-    music_result = len(check_audio_tag),auto_loop
-    return music_result #Für das Schreiben in die Datenbank einfach mit Index zugreifen - [0] fuer das Attribut: Musik ist vorhanden, [1] fuer: Autoplay/Loop Attribut
-
+def distorted_images():
+    distorted_images = False
+    img_tags =  soup.find_all("img")
+    if "width" in str(img_tags) or "height" in str(img_tags):
+        distorted_images = True
+    return distorted_images
+    
+"""
 def write():
     some_engine = create_engine(DB_URI, echo=DEBUG)
     Session = sessionmaker(bind=some_engine)    
@@ -213,6 +228,7 @@ def write():
     session.commit()
 
 
+"""
 """
 if __name__ == "__main__":
     # Hier muss ne for-Schleife hin, die alle Dokumente in der DB durchläuft
@@ -235,23 +251,58 @@ if __name__ == "__main__":
         w3c_errors = count_w3c_errors(url)
 
         write()
-
 """
 
+def flash():
+    flash_endings = [".swf",".fla",".flv",".swc"]
+    flash = False
+    tag_content = []
+    for tag in soup.find_all(True):
+        tag_content.append(tag)
+    if any([extension in str(tag_content) for extension in flash_endings]):
+        flash = True
+    return flash
+    
+def popups():
+    popups=False
+    if "window.open(" in str(soup.find_all("script")):
+        popups = True
+    return popups
+    
+def visitor_counter():
+    vis_counter = False
+    with open("visitor_counter_provider.txt", "r") as provider: 
+        visitor_sites = [line.lower().rstrip("\n") for line in provider]
+    if any([site in str(soup.find_all("a")) for site in visitor_sites]):
+        vis_counter = True
+    return vis_counter
+          
+        
 
 # Zum Testen:
 """
+
 print "Schlechte Schriftarten ja/nein: ", find_bad_fonts()
 print "Schlechte Farben: ", find_bad_colors()
 print "Anzahl Schriftarten: ", font_amount()
-print "Guestbook ja/nein:", find_guestbook(html)
-print "Schlechte Phrasen: ", find_phrases(html)
+print "Guestbook ja/nein:", find_guestbook()
+print "Schlechte Phrasen: ", find_phrases()
 print "Tote Links: ", find_dead_links()
 
 
 print "W3C Fehler: ", count_w3c_errors("http://prosieben.de")
+
+print "Gif Amount: ", get_gifs()
+print "Marquee: ", get_html_textanimation(html)
+
+
+
+
+print "Sind Bilder verzerrt?", distorted_images()
+print "Bad Structure: ", bad_site_structure()
+print "Flash vorhanden?", flash()
+
 """
-#print "Gif Amount: ", get_gifs()
-#print "Marquee: ", get_html_textanimation(html)
-#print "Anzahl H-Tags: ", bad_site_structure()
-print "Music: ", music()
+#print "Popups? ", popups()
+#print "Background music?", music()
+print "Visitor Counter? ", visitor_counter()

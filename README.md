@@ -9,3 +9,10 @@ Crawler Usage
 2. Install all required packages using pip: `pip install -r requirements.txt`
 3. Create the database: `python models.py`
 4. Start the crawler: `scrapy crawl basic_spider`
+
+
+Unusability Usage
+-----------------
+1. Switch to the `/code` subdirectory
+2. Install all required packages using pip: `pip install -r requirements.txt`
+3. Start: python unusability.py
