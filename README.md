@@ -16,3 +16,10 @@ Unusability Usage
 1. Switch to the `/code` subdirectory
 2. Install all required packages using pip: `pip install -r requirements.txt`
 3. Start: python unusability.py
+
+
+Indexer
+-----------------
+1. Switch to the `/code` subdirectory
+2. Install all required packages using pip: `pip install -r requirements.txt`
+3. Start: python indexer.py
