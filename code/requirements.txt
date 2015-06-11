@@ -16,3 +16,11 @@ SQLAlchemy==1.0.2
 Twisted==15.1.0
 w3lib==1.11.0
 zope.interface==4.1.2
+Flask==0.10.1
+Flask-WTF==0.9.5
+Flask-Bootstrap==3.2.0.2
+Jinja2==2.7.1
+WTForms==1.0.5
+Werkzeug==0.9.4
+
+
