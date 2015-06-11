@@ -23,3 +23,4 @@ Indexer
 1. Switch to the `/code` subdirectory
 2. Install all required packages using pip: `pip install -r requirements.txt`
 3. Start: python indexer.py
+4. line 85/86 auskommentieren, dann könnt ihr in die Datenbank schreiben.
