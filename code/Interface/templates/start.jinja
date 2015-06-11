@@ -1,0 +1,22 @@
+{% extends 'base.jinja' %}
+
+
+{% block title %}Smonky - Home{% endblock%}
+{% block content %}
+<h1>Crazy Smonky</h1>
+<p div-align: center>
+<img src= {{ url_for('static', filename = 'smonkycrazy.jpg') }} width="200" height="200" alt="search with smonkycrazy" title="smonkycrazy" border="0"></a>
+<br>
+<form method="POST" action="{{ url_for('smonkycrazy', next=request.args.get('next')) }}">
+    {{ form.queryfield.label }} {{ form.queryfield }}
+    {% if form.queryfield.errors %}
+    {% for error in form.queryfield.errors %}
+    <span class=text-error>{{ error }}</span>
+    {% endfor %}
+    {% endif %}
+   
+    <input type="text" name="bla" /><br /><br />
+    <input type="image" src={{ url_for('static', filename = 'smonkycrazy.jpg') }} alt="Sende" [b]onClick="Suche.submit()"[/b] /> 
+</form>
+</p>
+{% endblock %}
