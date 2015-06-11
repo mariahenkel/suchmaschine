@@ -7,6 +7,8 @@ import requests
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from PIL import Image
+import urllib
 #from config import DB_URI, DEBUG
 
 #Base = declarative_base()
@@ -205,12 +207,25 @@ def music():
             
     return audio,auto_loop
     
+    
+#pillow in readme
 def distorted_images():
-    distorted_images = False
+    distorted_counter = 0
+    url = "http://www.theworldsworstwebsiteever.com/"
     img_tags =  soup.find_all("img")
-    if "width" in str(img_tags) or "height" in str(img_tags):
-        distorted_images = True
+    for tag in img_tags:
+        if "width" in str(tag) or "height" in str(tag):
+            try:
+                im=Image.open(urllib.urlopen(url+tag.get("src")))
+            except IOError:
+                print "Error opening image..."
+            else:
+                if round(float(im.size[0])/im.size[1],2) != round(float(tag.get("width"))/float(tag.get("height")),2):
+                    distorted_counter += 1
+    distorted_images = True if float(distorted_counter)/len(img_tags)>0.1 else False
+    print "Es sind %s von %d Bildern verzerrt" % (distorted_counter,len(img_tags))
     return distorted_images
+    
     
 """
 def write():
@@ -298,11 +313,12 @@ print "Marquee: ", get_html_textanimation(html)
 
 
 
-print "Sind Bilder verzerrt?", distorted_images()
+
 print "Bad Structure: ", bad_site_structure()
 print "Flash vorhanden?", flash()
 
 """
 #print "Popups? ", popups()
 #print "Background music?", music()
-print "Visitor Counter? ", visitor_counter()
+#print "Visitor Counter? ", visitor_counter()
+print "Sind Bilder verzerrt?", distorted_images()
