@@ -5,73 +5,70 @@ import sys
 # Die folgende Zeile führt unter Linux zu einer Fehlermeldung. Bitte ggf. (ent)kommentieren.
 #from BeautifulSoup import BeautifulSoup
 
-from bs4 import BeautifulSoup, Comment # BeautifulSoup und Comment
-from nltk.corpus import stopwords # Stoppwortliste
-from nltk.stem import PorterStemmer # Stemmer
+from bs4 import BeautifulSoup, Comment # Import BeautifulSoup und Comment
+from nltk.corpus import stopwords # Import Stopword list
+from nltk.stem import PorterStemmer # Import Stemmer
 
-#SQLAlchemy
+#SQLAlchemy imports
 from sqlalchemy import create_engine, select
 from sqlalchemy import MetaData, Table
 import config
-from models import Wordlist, Document
+#from models import Wordlist, Document
 
-# Encoding für die Datei
+# Encoding for the file
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-#Verbindung herstellen, Tabellen laden
+# Establish connection, load all necessary tables
 engine = create_engine(config.DB_URI, echo=True)
 metadata = MetaData(bind=engine)
 wordtable = Table("wordlist", metadata, autoload=True)
 webpage = Table("document", metadata, autoload=True)
 
-# Nimm den Quelltext aus der Datenbank
+# Loading the source code from the database
 s = select([webpage.c.html_document]) 
 result = s.execute()
- 
+
 # Jede Ergebniszeile (row) ist eine Liste mit einem Inhalt (item).
 # Momentan wird nur das letzte Ergebnis benutzt, weil die Schleife nicht mit dem Rest verbunden ist.
-# Nächste Aufgabe: Modularisierung!!!
 for row in result:
 	for item in row:
 		site = item
 
-# Öffnen der Datei/Seite
-#soup = BeautifulSoup(open("index.html")) # Testversion
+# Opening the site/file
+#soup = BeautifulSoup(open("index.html")) # Testversion with a cusom file
 soup = BeautifulSoup(site)
 
-# Entfernen der Kommentare
+# Deleting all comments in the html file/site
 for child in soup.body:
     if isinstance(child,Comment):
         child.extract()
 
-# Übergabe des Textes und Erstellung einer Wortliste zur Weiterverarbeitung
+# Deliver the site text via beautifulsoup and create a word list for further processing
 body_text = soup.body.getText()
 
-#Es müssen noch Satzzeichen und andere Störfaktoren entfert werden
+# Deleting punctuation characters
 # Könnte man noch andersherum machen: If not in a.....z: replace
-# Man könnte für ./?/! einen end_of_sentence_indicator einbauen und so die Sätze zählen
 char_dict = {'?':'', '!':'', '-':'', ';':'', ':':'', '.':'', '...':'', '\n':' ', '/':'', '+':'', '<':'', '>':'', '}':'', '{':'', '=':'', ']':'', '[':'', ')':'', '(':'', '|':''}
 for i, j in char_dict.iteritems():
     body_text = body_text.replace(i, j)
 
-#Den String aus dem Body-Text aufteilen in einzelne Wörter und alles klein schreiben
+# Split string into words and transform to lowercase text
 word_list = body_text.lower().split( ) 
 
 
 
 #----------------------------------------------------------------------
-# Ab hier Stemming / Stoppworterkennung / Einspeisung in die Datenbank
+# From here on: Stemming / Stopword Recognition / Saving into Database
 #----------------------------------------------------------------------
 
-#Dokument-ID???, Wort, Wort-Stamm, Stoppwort(0/1), Position, Anzahl (für WDF/IDF)
+stop=stopwords.words('english') # Use english stopword list from nltk corpus
+rdict={} # Testversion that writes into a dictionary
 
-stop=stopwords.words('english')
-rdict={}
-
-word_pos = 0
+word_pos = 0 # Counter for word position
 stemmer=PorterStemmer()
 
+# save every word plus stem, count, etc. in the database/dictionary
 for element in word_list:
 	try:
 		word_stem = stemmer.stem(element)
@@ -80,13 +77,12 @@ for element in word_list:
 			is_stop = 1
 		else:
 			is_stop = 0
-		rdict[word_pos]=[element,word_stem,is_stop,word_count]
-		#Daten einfügen
-		#Wordlist: id, word, stem, stopword, number, idf
-		#wordtable.insert().execute(word=element, stem=word_stem, stopword=is_stop, number=word_pos, idf=word_count)
-		# Position weiterzählen
+		#rdict[word_pos]=[element,word_stem,is_stop,word_count] # testversion saves into a dictionary
+		#Wordlist: id, word, stem, stopword, number, idf # structure of wordlist table
+		wordtable.insert().execute(word=element, stem=word_stem, stopword=is_stop, number=word_pos, idf=word_count)
+		# Position plus one
 		word_pos = word_pos+1
 	except:
 		pass
 
-print rdict # Zum Testen
+#print rdict # Testversion prints dictionary
