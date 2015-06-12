@@ -6,8 +6,10 @@ DEBUG = False
 
 # General settings
 BOT_NAME = "basic_crawler"
-SPIDER_MODULES = ["basic_crawler.spiders"]
-NEWSPIDER_MODULE = "basic_crawler.spiders"
+# SPIDER_MODULES = ["basic_crawler.spiders"]
+# NEWSPIDER_MODULE = "basic_crawler.spiders"
+SPIDER_MODULES = ["basic_crawler.spiders.basic_spider_unusability"]
+NEWSPIDER_MODULE = "basic_crawler.spiders.basic_spider_unusability"
 ITEM_PIPELINES = {"basic_crawler.pipelines.InvertaPipeline": 1}
 
 # Settings to speed things up a bit (also see
