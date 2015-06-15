@@ -16,7 +16,7 @@ import urllib
 
 # Zum Testen:
 
-with open ("beispiel2.txt", "r") as html_file:
+with open ("../../data/beispiel2.txt", "r") as html_file:
     html = html_file.read().lower()
     html_wo_comments = re.sub("<!--.*?>", "", html) # war für beispiel2.txt nötig
     soup = BeautifulSoup(html_wo_comments)
@@ -35,7 +35,7 @@ def find_bad_fonts():
         for element in list:
             tag_attrs.append(element)          
 
-    with open("bad_fonts.txt", "r") as fonts_file:
+    with open("../../data/bad_fonts.txt", "r") as fonts_file:
         bad_fonts_list = [line.rstrip("\n") for line in fonts_file]      
         bad_fonts_counter = 0
         for font in bad_fonts_list:
@@ -46,13 +46,9 @@ def find_bad_fonts():
             bad_fonts = 0
         else:
             bad_fonts = 1
-	# bad_fonts
     return bad_fonts
     
-    #write_font_existing = Document(font_existing=find_bad_fonts())
-    #session.add(write_font_existing)
-    #session.commit()
-	
+
 def font_amount():
     tag_attrs_lists = [] 
     tag_attrs = [] 
@@ -62,12 +58,11 @@ def font_amount():
         for element in list:
             tag_attrs.append(element)   
                 
-    with open("fonts.txt", "r") as fonts_file: # Liste von Wikipedia - wäre auch möglich, alle font tags auszulesen und auszuwerten
+    with open("../../data/fonts.txt", "r") as fonts_file: # Liste von Wikipedia - wäre auch möglich, alle font tags auszulesen und auszuwerten
         fonts_list = [line.lower().rstrip("\n") for line in fonts_file]      
         fonts_counter = 0
         for font in fonts_list:
             if any(font in s for s in tag_attrs):
-                #print font
                 fonts_counter += 1
     return fonts_counter
     
@@ -92,13 +87,12 @@ def find_bad_colors():
         for element in list:
             tag_attrs.append(element)          
 
-    with open("bad_colors.txt", "r") as colors_file:
+    with open("../../data/bad_colors.txt", "r") as colors_file:
         bad_colors_list = [line.rstrip("\n") for line in colors_file]      
         color_counter = 0
         for color in bad_colors_list:
             if any(color in s for s in tag_attrs):
                 color_counter += 1
-                #print color
     return color_counter
 
 
@@ -107,8 +101,6 @@ def find_bad_colors():
 ########## 
 
 def get_gifs ():
-    #gif_amount = re.findall("<(.)*\.gif.*?>", str(html))
-    #return len(gif_amount)
     tag_attrs_lists = [] 
     tag_attrs = [] 
     for tag in soup.find_all(True):
@@ -160,13 +152,12 @@ def find_guestbook():
 
 
 def find_phrases():
-    with open("phrases.txt", "rb") as phrases_file:
+    with open("../../data/phrases.txt", "rb") as phrases_file:
         phrases_list = [line.rstrip("\n\r") for line in phrases_file]
     phrases_counter = 0 
     for phrase in phrases_list:
         if phrase in html:
             phrases_counter += 1
-            #print phrase
     return phrases_counter
 
 def find_dead_links():
@@ -181,11 +172,10 @@ def find_dead_links():
     for index, link in enumerate(links):
         try:
             r = requests.get(link)
-            if str(r.status_code).startswith("4"):
-                dead_links += 1      
-        except:
+            if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
+                dead_links += 1   
+        except requests.exceptions.ConnectionError:
             dead_links +=1
-
     return dead_links
     
 ##########
@@ -226,6 +216,30 @@ def distorted_images():
     print "Es sind %s von %d Bildern verzerrt" % (distorted_counter,len(img_tags))
     return distorted_images
     
+    
+def flash():
+    flash_endings = [".swf",".fla",".flv",".swc"]
+    flash = False
+    tag_content = []
+    for tag in soup.find_all(True):
+        tag_content.append(tag)
+    if any([extension in str(tag_content) for extension in flash_endings]):
+        flash = True
+    return flash
+    
+def popups():
+    popups=False
+    if "window.open(" in str(soup.find_all("script")):
+        popups = True
+    return popups
+    
+def visitor_counter():
+    vis_counter = False
+    with open("../../data/visitor_counter_provider.txt", "r") as provider: 
+        visitor_sites = [line.lower().rstrip("\n") for line in provider]
+    if any([site in str(soup.find_all("a")) for site in visitor_sites]):
+        vis_counter = True
+    return vis_counter
     
 """
 def write():
@@ -268,57 +282,23 @@ if __name__ == "__main__":
         write()
 """
 
-def flash():
-    flash_endings = [".swf",".fla",".flv",".swc"]
-    flash = False
-    tag_content = []
-    for tag in soup.find_all(True):
-        tag_content.append(tag)
-    if any([extension in str(tag_content) for extension in flash_endings]):
-        flash = True
-    return flash
-    
-def popups():
-    popups=False
-    if "window.open(" in str(soup.find_all("script")):
-        popups = True
-    return popups
-    
-def visitor_counter():
-    vis_counter = False
-    with open("visitor_counter_provider.txt", "r") as provider: 
-        visitor_sites = [line.lower().rstrip("\n") for line in provider]
-    if any([site in str(soup.find_all("a")) for site in visitor_sites]):
-        vis_counter = True
-    return vis_counter
+
           
-        
 
 # Zum Testen:
-"""
-
 print "Schlechte Schriftarten ja/nein: ", find_bad_fonts()
 print "Schlechte Farben: ", find_bad_colors()
 print "Anzahl Schriftarten: ", font_amount()
 print "Guestbook ja/nein:", find_guestbook()
 print "Schlechte Phrasen: ", find_phrases()
 print "Tote Links: ", find_dead_links()
-
-
 print "W3C Fehler: ", count_w3c_errors("http://prosieben.de")
-
 print "Gif Amount: ", get_gifs()
 print "Marquee: ", get_html_textanimation(html)
-
-
-
-
-
 print "Bad Structure: ", bad_site_structure()
 print "Flash vorhanden?", flash()
+print "Popups? ", popups()
+print "Background music?", music()
+print "Visitor Counter? ", visitor_counter()
+#print "Sind Bilder verzerrt?", distorted_images()
 
-"""
-#print "Popups? ", popups()
-#print "Background music?", music()
-#print "Visitor Counter? ", visitor_counter()
-print "Sind Bilder verzerrt?", distorted_images()
