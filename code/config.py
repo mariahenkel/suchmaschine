@@ -37,3 +37,12 @@ TOP1M_LIMIT = 100000
 
 # path to textfile with additional websites
 TXT_PATH = path.join(pardir, "data", "uglysites.txt")
+
+# Generation of secret keys according to the instructions from the Flask documentary.
+# http://flask.pocoo.org/docs/quickstart/#sessions
+SECRET_KEY = '\xca%6\xa4}\xb2K\xd4L\x94{\x08\xf5 \x06\xeaD\x89\xd2\xc9\x10\xcb\xcd4'
+
+#Is already included
+"""# Information about the database
+DB_URI = 'sqlite:///search.db'"""
+

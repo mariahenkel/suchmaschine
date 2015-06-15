@@ -1,0 +1,32 @@
+{% extends 'base.jinja' %}
+
+
+{% block title %}Smonky - Home{% endblock%}
+{center(block content, width=80)}
+{% block content %}
+<h1>Choose your Smonky!</h1>
+<p align="center">
+
+<form method="POST" action="{{ url_for('index', next=request.args.get('next')) }}">
+    <input type="image" src={{ url_for('static', filename = 'smonkynormal.jpg') }} Value="normalsearch" width="200" height="200" alt="search with smonkynormal" title="smonkynormal" border="0" />
+    <input type="image" src={{ url_for('static', filename = 'smonkycrazy.jpg') }} Value="uglysearch" width="200" height="200" alt="search with smonkycrazy" title="smonkycrazy" border="0" />
+    <br>
+    {{ form.queryfield.label }} {{ form.queryfield }}
+    {% if form.queryfield.errors %}
+    {% for error in form.queryfield.errors %}
+    <span class=text-error>{{ error }}</span>
+    {% endfor %}
+    {% endif %}
+   
+</form>
+</p>
+{# Bei der Ausgabe müsste ich das ganze allerdings noch auf eine Zahl limitieren, da jetzt einfach erstmal alles ausgegeben werden würde. #}
+<h3>Results for Smonky-Normal</h3>
+<ul>
+{% for result in results %}
+<li>{{ result.title | safe }}, {{ result.url | safe }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+</p>
+{% endblock %}
