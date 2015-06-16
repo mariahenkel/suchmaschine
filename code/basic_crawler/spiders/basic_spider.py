@@ -14,8 +14,9 @@ class Website_spider(CrawlSpider):
     def parse(self, response):
         # we parse the website as an website item with title, link and body
         item = Website()
-        item['title'] = response.selector.xpath(
-            '//title/text()').extract()[0]
+        title_resp = response.selector.xpath(
+            '//title/text()').extract()
+        item['title'] = title_resp[0] if len(title_resp) > 0 else None
         item['link'] = response.url
         item['body'] = response.body.decode(response.encoding)
         yield item

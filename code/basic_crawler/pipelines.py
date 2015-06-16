@@ -38,17 +38,16 @@ class InvertaPipeline(object):
 
     def process_item(self, item, spider):
         session = self.Session()
-        if not re.match(r'^.+?[^\/:][\/](.)|$', item['link']):
-            try:
-                page = get_or_create(session, Document, url=item["link"])
-                session.flush()
-                page.html_document = item["body"]
-                page.title = item["title"]
-                session.commit()
-            except Exception as e:
-                print e
-                session.rollback()
-                raise
-            finally:
-                session.close()
+        try:
+            page = get_or_create(session, Document, url=item["link"])
+            session.flush()
+            page.html_document = item["body"]
+            page.title = item["title"]
+            session.commit()
+        except Exception as e:
+            print e
+            session.rollback()
+            raise e
+        finally:
+            session.close()
         return item
