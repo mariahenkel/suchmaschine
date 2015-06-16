@@ -48,9 +48,11 @@ def font_amount(tags):
     return fonts_counter
     
 
-def get_html_textanimation(html):
-    marquee_amount = re.findall("<marquee(.)*</marquee>", str(html))  
-    return len(marquee_amount)
+def get_html_textanimation(soup):
+    marquee_amount = 0
+    for tag in soup.find_all("marquee"):
+        marquee_amount +=1
+    return marquee_amount
 
 
 def find_bad_colors(tags):    
@@ -78,8 +80,11 @@ def count_w3c_errors (url):
     content = check_url.read()
     soup = BeautifulSoup(content)
     errors= soup.find("h3" ,class_ = "invalid")
-    errors_extracted = re.findall(r'\d+', str(errors.get_text()))
-    errors_extracted = [int(x) for x in errors_extracted]
+    if errors is not None:
+        errors_extracted = re.findall(r'\d+', str(errors.get_text()))
+        errors_extracted = [int(x) for x in errors_extracted]
+    else:
+        errors_extracted = [0]
     return errors_extracted[0]
 
 def find_guestbook(html):
@@ -134,15 +139,18 @@ def distorted_images(url, soup):
     distorted_counter = 0
     img_tags =  soup.find_all("img")
     for tag in img_tags:
-        if "width" in str(tag) or "height" in str(tag):
+        if "width" in str(tag) and "height" in str(tag):
             try:
                 im=Image.open(urllib.urlopen(url+tag.get("src")))
             except IOError:
                 print "Error opening image..."
-            else:
-                if round(float(im.size[0])/im.size[1],2) != round(float(tag.get("width"))/float(tag.get("height")),2):
-                    distorted_counter += 1
-    distorted_images = True if float(distorted_counter)/len(img_tags)>0.1 else False
+            else:   
+                try:
+                    if round(float(im.size[0])/im.size[1],2) != round(float(tag.get("width"))/float(tag.get("height")),2):
+                        distorted_counter += 1
+                except ZeroDivisionError:
+                    pass
+    distorted_images = True if len(img_tags) != 0 and float(distorted_counter)/len(img_tags)>0.1 else False
     print "Es sind %s von %d Bildern verzerrt" % (distorted_counter,len(img_tags))
     return distorted_images
     
@@ -177,6 +185,7 @@ Session = sessionmaker(bind=some_engine)
 session = Session()
 websites = session.query(Document.html_document, Document.url).all()
 
+"""
 # Läuft Datenbank durch, speichert alles in Variablen (muss dann noch in die DB)
 for website in websites:
     html = website[0].lower()
@@ -186,7 +195,7 @@ for website in websites:
     bad_fonts = find_bad_fonts(tags)
     bad_colors = find_bad_colors(tags)
     fonts = font_amount(tags)
-    #marquee = get_html_textanimation(html)
+    #marquee = get_html_textanimation(soup)
     gifs = get_gifs(tags)
     bad_structure =  bad_site_structure(soup)
     #w3c = count_w3c_errors(url)
@@ -200,11 +209,11 @@ for website in websites:
     popups = get_popups(soup)
     counter = visitor_counter(soup)
 
-    
+"""
 
 
 # Läuft Datenbank durch, gibt alles aus
-"""
+
 for website in websites:
     html = website[0].lower()
     url = website[1]
@@ -214,35 +223,37 @@ for website in websites:
     print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
     print "Schlechte Farben: ", find_bad_colors(tags)
     fonts = font_amount(tags)
-    #print "Marquee: ", get_html_textanimation(html)
+    print "Marquee: ", get_html_textanimation(soup)
     print "Gif Amount: ", get_gifs(tags)
     print "Bad Structure: ", bad_site_structure(soup)
-    #print "W3C Fehler: ", count_w3c_errors(url)
+    print "W3C Fehler: ", count_w3c_errors(url)
     print "Guestbook ja/nein:", find_guestbook(html)
     print "Schlechte Phrasen: ", find_phrases(html)
     #print "Tote Links: ", find_dead_links(soup)
     print "Background music?", music(soup)[0]
     print "Autoloop", music(soup)[1]
-    #print "Sind Bilder verzerrt?", distorted_images(url, soup)
+    print "Sind Bilder verzerrt?", distorted_images(url, soup)
     print "Flash vorhanden?", get_flash(soup)
     print "Popups? ", get_popups(soup)
     print "Visitor Counter? ", visitor_counter(soup)
     print "------------------------------"
-"""
-
-          
 
 # Zum Testen mit txt Datei, ohne DB:
-"""
+
+
+
 with open ("../data/beispiel2.txt", "r") as html_file:
     html = html_file.read().lower()
-soup = BeautifulSoup(html)
-tags = get_tags(soup)
+    soup = BeautifulSoup(html)
+    tags = get_tags(soup)
+    
+"""    
 url = "http://www.theworldsworstwebsiteever.com/"
+print "Sind Bilder verzerrt?", distorted_images(url, soup)
 print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
 print "Schlechte Farben: ", find_bad_colors(tags)
 print "Anzahl Schriftarten: ", font_amount(tags)
-print "Marquee: ", get_html_textanimation(html)
+print "Marquee: ", get_html_textanimation(soup)
 print "Gif Amount: ", get_gifs(tags)
 print "Bad Structure: ", bad_site_structure(soup)
 print "W3C Fehler: ", count_w3c_errors(url)
@@ -251,8 +262,9 @@ print "Schlechte Phrasen: ", find_phrases(html)
 print "Tote Links: ", find_dead_links(soup)
 print "Background music?", music(soup)[0]
 print "Musik Autoloop", music(soup)[1]
-print "Sind Bilder verzerrt?", distorted_images(url, soup)
+
 print "Flash vorhanden?", get_flash(soup)
 print "Popups? ", get_popups(soup)
 print "Visitor Counter? ", visitor_counter(soup)
+
 """
