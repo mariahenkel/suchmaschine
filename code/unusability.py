@@ -68,10 +68,10 @@ def get_gifs(tags):
     return str(tags).count(".gif")
     
 def bad_site_structure(soup):
-    bad_structure = True
+    bad_structure = 1
     structure_tags = ["h1","h2","h3","h4","h5","h6","header", "nav", "p", "div"] # p muss wahrscheinlich raus, zuviel benutzt
     if len(soup.find_all([x for x in structure_tags]))>10:
-        bad_structure = False
+        bad_structure = 0
     return bad_structure
     
 def count_w3c_errors (url):
@@ -123,15 +123,15 @@ def find_dead_links(soup):
 def music(soup):
     audiofile_endings = [".mp3",".wav",".wma",".ogg",".mid"]
     autoplay_loop_strings = ["autoplay","loop",".play("]
-    audio = False
-    auto_loop = False
+    audio = 0
+    auto_loop = 0
     tag_content = []
     for tag in soup.find_all(True):
         tag_content.append(tag)
     if any([extension in str(tag_content) for extension in audiofile_endings]):
-        audio = True
+        audio = 1
         if any([item in str(tag_content) for item in autoplay_loop_strings]):
-            auto_loop = True
+            auto_loop = 1
             
     return audio,auto_loop
     
@@ -150,32 +150,32 @@ def distorted_images(url, soup):
                         distorted_counter += 1
                 except ZeroDivisionError:
                     pass
-    distorted_images = True if len(img_tags) != 0 and float(distorted_counter)/len(img_tags)>0.1 else False
-    print "Es sind %s von %d Bildern verzerrt" % (distorted_counter,len(img_tags))
+    distorted_images = 1 if len(img_tags) != 0 and float(distorted_counter)/len(img_tags)>0.1 else 0
+    #print "Es sind %s von %d Bildern verzerrt" % (distorted_counter,len(img_tags))
     return distorted_images
     
 def get_flash(soup):
     flash_endings = [".swf",".fla",".flv",".swc"]
-    flash = False
+    flash = 0
     tag_content = []
     for tag in soup.find_all(True):
         tag_content.append(tag)
     if any([extension in str(tag_content) for extension in flash_endings]):
-        flash = True
+        flash = 1
     return flash
     
 def get_popups(soup):
-    popups=False
+    popups=0
     if "window.open(" in str(soup.find_all("script")):
-        popups = True
+        popups = 1
     return popups
     
 def visitor_counter(soup):
-    vis_counter = False
+    vis_counter = 0
     with open("../data/visitor_counter_provider.txt", "r") as provider: 
         visitor_sites = [line.lower().rstrip("\n") for line in provider]
     if any([site in str(soup.find_all("a")) for site in visitor_sites]):
-        vis_counter = True
+        vis_counter = 1
     return vis_counter
 
 
@@ -187,6 +187,7 @@ websites = session.query(Document.html_document, Document.url).all()
 
 # Daten werden in die DB geschrieben, momentan noch sehr langsam
 websites_data = []
+"""
 for website in websites:
     website_dict = {}
     html = website[0].lower()
@@ -218,9 +219,9 @@ for website in websites_data:
             url = v
         update = session.query(Document).filter(Document.url == url).update({k:v})
     session.commit()
-
-# Zum Testen
 """
+# Zum Testen
+
 # Läuft Datenbank durch, gibt alles aus
 for website in websites:
     html = website[0].lower()
@@ -245,7 +246,7 @@ for website in websites:
     print "Popups? ", get_popups(soup)
     print "Visitor Counter? ", visitor_counter(soup)
     print "------------------------------"
-"""
+
 
 
 # Zum Testen mit txt Datei, ohne DB:
