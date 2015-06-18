@@ -6,5 +6,6 @@ import string
 
 
 class SearchQuery(Form):
-    queryfield = TextField('Suchfeld', validators=[DataRequired(), Length(min=1)])
-    add = SubmitField('Add')
+    queryfield = TextField('Query', validators=[DataRequired(), Length(min=1)])
+    normalsearch = SubmitField('Add Smonky-Normal')
+    uglysearch = SubmitField('Add Smonky-Ugly')
