@@ -185,35 +185,43 @@ Session = sessionmaker(bind=some_engine)
 session = Session()
 websites = session.query(Document.html_document, Document.url).all()
 
-"""
-# Läuft Datenbank durch, speichert alles in Variablen (muss dann noch in die DB)
+# Daten werden in die DB geschrieben, momentan noch sehr langsam
+websites_data = []
 for website in websites:
+    website_dict = {}
     html = website[0].lower()
-    url = website[1]
+    url = website[1]    
     soup = BeautifulSoup(html)
     tags = get_tags(soup)
-    bad_fonts = find_bad_fonts(tags)
-    bad_colors = find_bad_colors(tags)
-    fonts = font_amount(tags)
-    #marquee = get_html_textanimation(soup)
-    gifs = get_gifs(tags)
-    bad_structure =  bad_site_structure(soup)
-    #w3c = count_w3c_errors(url)
-    gb =  find_guestbook(html)
-    phrases = find_phrases(html)
-    dead_links = find_dead_links(soup)
-    audio = music(soup)[0]
-    auto_loop = music(soup)[1]
-    #images = distorted_images(url, soup)
-    flash = get_flash(soup)
-    popups = get_popups(soup)
-    counter = visitor_counter(soup)
+    website_dict['url'] = url
+    website_dict['font_existing'] = find_bad_fonts(tags)
+    website_dict['colour'] = find_bad_colors(tags)
+    website_dict['font_number'] = font_amount(tags)
+    website_dict['textanimation'] = get_html_textanimation(soup)
+    website_dict['number_of_gifs'] = get_gifs(tags)
+    website_dict['pagestructure'] = bad_structure =  bad_site_structure(soup)
+    website_dict['w3c'] = count_w3c_errors(url)
+    website_dict['guestbook'] =  find_guestbook(html)
+    website_dict['phrases'] = find_phrases(html)
+    website_dict['deadlinks'] = find_dead_links(soup)
+    website_dict['backgroundmusic'] = music(soup)[0]
+    website_dict['musicloop'] = music(soup)[1]
+    website_dict['picture_distorted'] = distorted_images(url, soup)
+    website_dict['flash'] = get_flash(soup)
+    website_dict['popups'] = get_popups(soup)
+    website_dict['hitcounter'] = visitor_counter(soup)
+    websites_data.append(website_dict)
 
+for website in websites_data:
+    for k,v in website.items():
+        if k == 'url':
+            url = v
+        update = session.query(Document).filter(Document.url == url).update({k:v})
+    session.commit()
+
+# Zum Testen
 """
-
-
 # Läuft Datenbank durch, gibt alles aus
-
 for website in websites:
     html = website[0].lower()
     url = website[1]
@@ -222,14 +230,14 @@ for website in websites:
     print url
     print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
     print "Schlechte Farben: ", find_bad_colors(tags)
-    fonts = font_amount(tags)
+    print "Anzahl Schriften: ", font_amount(tags)
     print "Marquee: ", get_html_textanimation(soup)
     print "Gif Amount: ", get_gifs(tags)
     print "Bad Structure: ", bad_site_structure(soup)
     print "W3C Fehler: ", count_w3c_errors(url)
     print "Guestbook ja/nein:", find_guestbook(html)
     print "Schlechte Phrasen: ", find_phrases(html)
-    #print "Tote Links: ", find_dead_links(soup)
+    print "Tote Links: ", find_dead_links(soup)
     print "Background music?", music(soup)[0]
     print "Autoloop", music(soup)[1]
     print "Sind Bilder verzerrt?", distorted_images(url, soup)
@@ -237,17 +245,16 @@ for website in websites:
     print "Popups? ", get_popups(soup)
     print "Visitor Counter? ", visitor_counter(soup)
     print "------------------------------"
+"""
+
 
 # Zum Testen mit txt Datei, ohne DB:
-
-
-
+"""
 with open ("../data/beispiel2.txt", "r") as html_file:
     html = html_file.read().lower()
     soup = BeautifulSoup(html)
     tags = get_tags(soup)
-    
-"""    
+   
 url = "http://www.theworldsworstwebsiteever.com/"
 print "Sind Bilder verzerrt?", distorted_images(url, soup)
 print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
