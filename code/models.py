@@ -18,7 +18,7 @@ class Document(Base):
     """
     __tablename__ = "document"
     id = Column(Integer, primary_key=True)
-    url = Column(String(500))
+    url = Column(String(2000))
     title = Column(Text)
     ranking = Column(Float)
     html_document = Column(Text)

@@ -39,11 +39,12 @@ class InvertaPipeline(object):
     def process_item(self, item, spider):
         session = self.Session()
         try:
-            page = get_or_create(session, Document, url=item["link"])
-            session.flush()
-            page.html_document = item["body"]
-            page.title = item["title"]
-            session.commit()
+            if len(item["url"] <= 2000):
+                page = get_or_create(session, Document, url=item["link"])
+                session.flush()
+                page.html_document = item["body"]
+                page.title = item["title"]
+                session.commit()
         except Exception as e:
             print e
             session.rollback()
