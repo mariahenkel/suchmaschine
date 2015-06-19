@@ -1,48 +1,61 @@
 {% extends 'base.jinja' %}
-
-
 {% block title %}Smonky - Home{% endblock%}
 {center(block content, width=80)}
 {% block content %}
-<div class="center-block">
-<h1>Choose your Smonky!</h1>
-
-<form method="POST" action="{{ url_for('index', next=request.args.get('next')) }}">
-    {{ form.queryfield.label }} {{ form.queryfield }}
+<form class="form" method="POST" action="/">
+    {{ form.hidden_tag() }}
+    <!-- LOGO -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-4">
+            <div class="center-block">
+                {% if not sugly%}
+                    <img src="{{ url_for('static', filename = 'smonkynormal.png') }}">
+                    {%else %}
+                    <img src="{{ url_for('static', filename = 'smonkycrazy.png') }}">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <!-- QUERY FIELD -->
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="form-group input-lg">
+                {{ form.queryfield(class="form-control")}}
+            </div>
+        </div>
+    </div>
+    <!-- BUTTONS -->
+    <div class="row">
+        <div class="col-md-1 col-md-offset-4">
+            <button type="submit" formaction="/normal" class="btn btn-lg btn-default">Normal Search</button>
+        </div>
+        <div class="col-md-3 col-md-offset-1">
+            <button type="submit" formaction="/sugly" class="btn btn-lg btn-primary">Let's be crazy!</button>
+        </div>
+    </div>
+    <!-- ERRORS -->
     <br>
     {% if form.queryfield.errors %}
-    {% for error in form.queryfield.errors %}
-    <span class=text-error>{{ error }}</span>
-    {% endfor %}
+        {% for error in form.queryfield.errors %}
+            <span class=text-error>{{ error }}</span>
+        {% endfor %}
     {% endif %}
     <br>
-    {# Beide Input-Buttons mit den Logos#}
-    <input type="image" src={{ url_for('static', filename = 'smonkynormal.png') }} Value="normalsearch" width="200" height="200" alt="search with smonkynormal" title="smonkynormal" border="0" />
-    <input type="image" src={{ url_for('static', filename = 'smonkycrazy.png') }} Value="uglysearch" width="200" height="200" alt="search with smonkycrazy" title="smonkycrazy" border="0" />
-    <br>
-   
-  
-   
 </form>
-</p>
-{# Bei der Ausgabe müsste ich das ganze allerdings noch auf eine Zahl limitieren, da jetzt einfach erstmal alles ausgegeben werden würde. #}
-{% if results_smonkynormal %}
-<h3>Results for Smonky-Normal</h3>
-<ul>
-{% for result in results_smonkynormal %}
-<li>{{ result.title | safe }}, {{ result.url | safe }}</li>
-{% endfor %}
-</ul>
-{% endif %}
-</p>
-{% if results_smonkyugly %}
-<h3>Results for Smonky-Ugly</h3>
-<ul>
-{% for result in results_smonkyugly %}
-<li>{{ result.title | safe }}, {{ result.url | safe }}</li>
-{% endfor %}
-</ul>
-{% endif %}
-</p>
 </div>
+</p>
+<!-- RESULTS -->
+{# Bei der Ausgabe müsste ich das ganze allerdings noch auf eine Zahl limitieren, da jetzt einfach erstmal alles ausgegeben werden würde. #}
+{% if results %}
+<div class="row">
+<div class="col-md-6 col-md-offset-3">
+    <h3>Results for Smonky-Normal</h3>
+    <ul>
+        {% for result in results %}
+            <li>{{ result.title | safe }}, <a href="{{ result.url | safe }}">{{ result.url | safe }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+</p>
+</p>
 {% endblock %}
