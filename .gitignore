@@ -61,4 +61,6 @@ target/
 
 # ignore .env file
 .env
+# project specific
+config.py
 *.db
