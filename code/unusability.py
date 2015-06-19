@@ -187,30 +187,51 @@ websites = session.query(Document.html_document, Document.url).all()
 
 # Daten werden in die DB geschrieben, momentan noch sehr langsam
 websites_data = []
-"""
 for website in websites:
     website_dict = {}
     html = website[0].lower()
-    url = website[1]    
+    url = website[1]
     soup = BeautifulSoup(html)
     tags = get_tags(soup)
+    bad_fonts = find_bad_fonts(tags)
+    bad_colors = find_bad_colors(tags)
+    fonts = font_amount(tags)
+    marquee = get_html_textanimation(soup)
+    gifs = get_gifs(tags)
+    bad_structure =  bad_site_structure(soup)
+    w3c = count_w3c_errors(url)
+    gb =  find_guestbook(html)
+    phrases = find_phrases(html)
+    dead_links = find_dead_links(soup)
+    audio = music(soup)[0]
+    audio_loop = music(soup)[1]
+    images = distorted_images(url, soup)
+    flash = get_flash(soup)
+    popups = get_popups(soup)
+    counter = visitor_counter(soup)
+    # Wird noch geändert, ist jetzt erstmal damit wir überhaupt was an der Stelle haben
+    factor = bad_fonts*4+bad_colors+fonts+gifs*0.5+marquee*2
+    +bad_structure*2+w3c*0.1+gb*2+phrases+dead_links+audio*7 
+    +audio_loop*3+images*3+flash*2+popups*3+counter*2
+    
     website_dict['url'] = url
-    website_dict['font_existing'] = find_bad_fonts(tags)
-    website_dict['colour'] = find_bad_colors(tags)
-    website_dict['font_number'] = font_amount(tags)
-    website_dict['textanimation'] = get_html_textanimation(soup)
-    website_dict['number_of_gifs'] = get_gifs(tags)
-    website_dict['pagestructure'] = bad_structure =  bad_site_structure(soup)
-    website_dict['w3c'] = count_w3c_errors(url)
-    website_dict['guestbook'] =  find_guestbook(html)
-    website_dict['phrases'] = find_phrases(html)
-    website_dict['deadlinks'] = find_dead_links(soup)
-    website_dict['backgroundmusic'] = music(soup)[0]
-    website_dict['musicloop'] = music(soup)[1]
-    website_dict['picture_distorted'] = distorted_images(url, soup)
-    website_dict['flash'] = get_flash(soup)
-    website_dict['popups'] = get_popups(soup)
-    website_dict['hitcounter'] = visitor_counter(soup)
+    website_dict['font_existing'] = bad_fonts
+    website_dict['colour'] = bad_colors
+    website_dict['font_number'] = fonts
+    website_dict['textanimation'] = marquee
+    website_dict['number_of_gifs'] = gifs
+    website_dict['pagestructure'] = bad_structure
+    website_dict['w3c'] = w3c
+    website_dict['guestbook'] =  gb
+    website_dict['phrases'] = phrases
+    website_dict['deadlinks'] = dead_links
+    website_dict['backgroundmusic'] = audio
+    website_dict['musicloop'] = audio_loop
+    website_dict['picture_distorted'] = images
+    website_dict['flash'] = flash
+    website_dict['popups'] = popups
+    website_dict['hitcounter'] = counter
+    website_dict['overall_score'] = factor
     websites_data.append(website_dict)
 
 for website in websites_data:
@@ -219,7 +240,7 @@ for website in websites_data:
             url = v
         update = session.query(Document).filter(Document.url == url).update({k:v})
     session.commit()
-"""
+
 # Zum Testen
 
 # Läuft Datenbank durch, gibt alles aus
