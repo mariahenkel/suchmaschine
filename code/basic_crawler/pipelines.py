@@ -8,7 +8,7 @@ from models import Document
 
 
 def db_connect():
-    return create_engine(config.DB_URI, convert_unicode=True)
+    return create_engine(config.DB_URI, convert_unicode=True, echo=False)
 
 
 # helpful function to avoid integrity errors as found at
@@ -38,7 +38,7 @@ class InvertaPipeline(object):
     def process_item(self, item, spider):
         session = self.Session()
         try:
-            if len(item["url"]) <= 2000:
+            if len(item["link"]) <= 2000:
                 page = get_or_create(session, Document, url=item["link"])
                 session.flush()
                 page.html_document = item["body"]
