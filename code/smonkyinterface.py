@@ -76,6 +76,22 @@ def select(searchquerynew):
         sorted_all_documents = sorted(
             all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
+    
+
+
+def sugly(searchquerynew):
+    all_documents = {}
+    for element in searchquerynew:
+        read_documents_ugly = session.query(Document, Document.overall_score, Wordlist.idf*ConsistsOf.wdf).outerjoin(ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
+        for document in read_documents_ugly:
+            a,b,c = document
+            b = 5
+            if a in all_documents.keys():
+                all_documents[a] = all_documents[a] + (b*5+c)
+            else:
+                all_documents[a] = b*5+c
+    sorted_all_documents = sorted(all_documents.iteritems(), key=operator.itemgetter(1), reverse = True)
+    return [elem[0] for elem in sorted_all_documents]
 
 
 #@app.teardown_appcontext
@@ -85,6 +101,7 @@ def select(searchquerynew):
 # Index-Seite.
 # Stellt die Startseite dar, hier sollte aber auch direkt die Eingabe in das Suchfeld weiterverarbeitet werden, damit dann, je nach gewählter Suche,
 # das Template für Smonky-Normal, oder Smonky-Ugly ausgegeben werden kann.
+
 @app.route('/', methods=["GET", "POST"])
 def index():
     form = SearchQuery()
@@ -114,26 +131,13 @@ def suglysearch():
         searchqueryreplaced = replace_char(searchquery)
         searchquerynew = process_query(searchqueryreplaced)
         # TODO: make sugly search here
-        results = select(searchquerynew)
-        print len(results)
+        results = sugly(searchquerynew)
+        print results
         return render_template('index.jinja', form=form,
                                results=results, sugly=True)
     else:
         return redirect('/')
 
-"""
-def unus(searchquerynew):
-    all_documents = {}
-    for element in searchquerynew:
-        read_documents_ugly = session.query(Document.id, Document.overall_score, Wordlist.idf*ConsistsOf.wdf).outerjoin(ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
-        for document in read_documents_ugly:
-            a,b,c = document
-            if a in all_documents.keys():
-                all_documents[a] = all_documents[a] + (b*5+c)
-            else:
-                all_documents[a] = b*5+c
-    sorted_all_documents = sorted(all_documents.iteritems(), key=operator.itemgetter(1), reverse = True)
-    return sorted_all_documents """
 
 
 @app.route('/info')
