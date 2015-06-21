@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -
 import urllib
 import re
+import Queue
+import time
 from bs4 import BeautifulSoup
 import requests
 from models import Document
@@ -9,9 +11,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from PIL import Image
 import urllib
-from config import DB_URI, DEBUG
+from defaultconfig import DB_URI, DEBUG
+from threading import Thread
 
 Base = declarative_base()
+queue = Queue.Queue()
+all_urls = []
 
 def get_tags(soup):
     tag_attrs_lists = [] 
@@ -74,18 +79,7 @@ def bad_site_structure(soup):
         bad_structure = 0
     return bad_structure
     
-def count_w3c_errors (url):
-    w3c_link = "https://validator.w3.org/check?uri="
-    check_url = urllib.urlopen(w3c_link+url)
-    content = check_url.read()
-    soup = BeautifulSoup(content)
-    errors= soup.find("h3" ,class_ = "invalid")
-    if errors is not None:
-        errors_extracted = re.findall(r'\d+', str(errors.get_text()))
-        errors_extracted = [int(x) for x in errors_extracted]
-    else:
-        errors_extracted = [0]
-    return errors_extracted[0]
+
 
 def find_guestbook(html):
     if "guestbook" in html:
@@ -104,22 +98,48 @@ def find_phrases(html):
             phrases_counter += 1
     return phrases_counter
 
-def find_dead_links(soup):
-    links = []
-    for link in soup.find_all('a'):
-        if link.get("href"):
-            if link.get('href').startswith("http"):
-                links.append(link.get('href')) 
+def find_dead_links(soup, links):
     dead_links = 0
     for index, link in enumerate(links):
         try:
             r = requests.get(link)
             if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
-                dead_links += 1   
+                dead_links = 1   
+                queue.put(dead_links)
         except requests.exceptions.ConnectionError:
-            dead_links +=1
-    return dead_links
-    
+            dead_links = 1
+            queue.put(dead_links)
+        
+def threads_links(soup):
+    thread_list = []
+    amount_dead_links = 0
+    threads = 10
+    links = []
+    for link in soup.find_all('a'):
+        if link.get("href"):
+            if link.get('href').startswith("http"):
+                links.append(link.get('href'))
+    if len(links)<threads:   
+        threads = len(links)
+    beg = 0  
+    if links:
+        end = len(links)/threads
+        while beg < len(links):
+            t = Thread(target=find_dead_links, args=(soup,links[beg:end]))
+            beg +=len(links)/threads
+            end += len(links)/threads          
+            t.start()
+            thread_list.append(t)
+            #print "schleife zuende",beg,end,len(links)    
+    for thread in thread_list:
+        t.join()    
+    while not queue.empty():
+        amount_dead_links += queue.get()
+        
+    return amount_dead_links
+
+
+
 def music(soup):
     audiofile_endings = [".mp3",".wav",".wma",".ogg",".mid"]
     autoplay_loop_strings = ["autoplay","loop",".play("]
@@ -134,7 +154,7 @@ def music(soup):
             auto_loop = 1
             
     return audio,auto_loop
-    
+"""    
 def distorted_images(url, soup):
     distorted_counter = 0
     img_tags =  soup.find_all("img")
@@ -153,7 +173,7 @@ def distorted_images(url, soup):
     distorted_images = 1 if len(img_tags) != 0 and float(distorted_counter)/len(img_tags)>0.1 else 0
     #print "Es sind %s von %d Bildern verzerrt" % (distorted_counter,len(img_tags))
     return distorted_images
-    
+"""    
 def get_flash(soup):
     flash_endings = [".swf",".fla",".flv",".swc"]
     flash = 0
@@ -178,13 +198,114 @@ def visitor_counter(soup):
         vis_counter = 1
     return vis_counter
 
+def distorted_images_test(url, soup,img_tags):
+    distorted_image = 0
+   
+   
+    for tag in img_tags:
+        if "width" in str(img_tags) and "height" in str(img_tags):
+            try:
+                im=Image.open(urllib.urlopen(url+tag.get("src")))
+            except IOError:
+                pass
+                #print "Error opening image...",url+tag.get("src")
+            else:   
+                try:
+                    if round(float(im.size[0])/im.size[1],2) != round(float(tag.get("width"))/float(tag.get("height")),2):
+                        distorted_image = 1 
+                        queue.put( distorted_image)
+                except ZeroDivisionError:
+                    pass
+    
+def threads_images(soup):
+    
+    thread_list = []
+    amount_distorted_images = 0
+    threads = 10
+    img_tags = soup.find_all("img")
+    if len(img_tags)<threads:   
+        threads = len(img_tags)
+    beg = 0
+    
+    if img_tags:
+        end = len(img_tags)/threads
+        while beg < len(img_tags):
+            t = Thread(target=distorted_images_test, args=(url,soup,img_tags[beg:end]))
+            beg +=len(img_tags)/threads
+            end += len(img_tags)/threads
+            
+            t.start()
+            thread_list.append(t)
+    
+    for thread in thread_list:
+        thread.join()
+    
+    while not queue.empty():
+        amount_distorted_images += queue.get()
+        
+    distorted_images = 1 if len(img_tags) != 0 and float(amount_distorted_images)/len(img_tags)>0.01 else 0
+    return distorted_images
+    
+def count_w3c_errors (url):
+    w3c_link = "https://validator.w3.org/check?uri="
+    check_url = urllib.urlopen(w3c_link+url)
+    content = check_url.read()
+    soup = BeautifulSoup(content)
+    errors= soup.find("h3" ,class_ = "invalid")
+    if errors is not None:
+        errors_extracted = re.findall(r'\d+', str(errors.get_text()))
+        errors_extracted = [int(x) for x in errors_extracted]
+    else:
+        errors_extracted = [0]
+    return errors_extracted[0]
+    
+    
+def count_w3c_errors_test (all_urls,w3c_errors):
+    w3c_link = "https://validator.w3.org/check?uri="
+    for url in all_urls:
+        print url
+        check_url = urllib.urlopen(w3c_link+url)
+        content = check_url.read()
+        soup = BeautifulSoup(content)
+        errors= soup.find("h3" ,class_ = "invalid")
+        if errors is not None:
+            errors_extracted = re.findall(r'\d+', str(errors.get_text()))
+            errors_extracted = [int(x) for x in errors_extracted]
+        else:
+            errors_extracted = [0]
+        w3c_errors[url] = errors_extracted[0]
+        print errors_extracted[0]
+        
+    
 
+def threads_w3c(all_urls):
+    thread_list = []
+    threads = 20
+    beg = 0
+    w3c_errors = {}
+    if len(all_urls)<threads:   
+        threads = len(all_urls)
+    end = len(all_urls)/threads
+    if all_urls:
+        while beg < len(all_urls):
+            t = Thread(target=count_w3c_errors_test, args=([all_urls[beg:end],w3c_errors]))
+            beg +=len(all_urls)/threads
+            end += len(all_urls)/threads
+            t.start()
+            thread_list.append(t)
+    for thread in thread_list:
+        thread.join()
+  
+    return w3c_errors
+ 
 
 some_engine = create_engine(DB_URI, echo=DEBUG)
 Session = sessionmaker(bind=some_engine)    
 session = Session()
 websites = session.query(Document.html_document, Document.url).all()
 
+
+"""
 # Daten werden in die DB geschrieben, momentan noch sehr langsam
 websites_data = []
 for website in websites:
@@ -202,10 +323,10 @@ for website in websites:
     w3c = count_w3c_errors(url)
     gb =  find_guestbook(html)
     phrases = find_phrases(html)
-    dead_links = find_dead_links(soup)
+    dead_links = threads_links(soup)
     audio = music(soup)[0]
     audio_loop = music(soup)[1]
-    images = distorted_images(url, soup)
+    images = threads_images(soup)
     flash = get_flash(soup)
     popups = get_popups(soup)
     counter = visitor_counter(soup)
@@ -233,50 +354,59 @@ for website in websites:
     website_dict['hitcounter'] = counter
     website_dict['overall_score'] = factor
     websites_data.append(website_dict)
-
+    print "fertig"
 for website in websites_data:
     for k,v in website.items():
         if k == 'url':
             url = v
         update = session.query(Document).filter(Document.url == url).update({k:v})
     session.commit()
-
+    
+"""
 # Zum Testen
-
 # Läuft Datenbank durch, gibt alles aus
+
 for website in websites:
     html = website[0].lower()
     url = website[1]
+    all_urls.append(url)
     soup = BeautifulSoup(html)
     tags = get_tags(soup)
-    print url
-    print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
-    print "Schlechte Farben: ", find_bad_colors(tags)
-    print "Anzahl Schriften: ", font_amount(tags)
-    print "Marquee: ", get_html_textanimation(soup)
-    print "Gif Amount: ", get_gifs(tags)
-    print "Bad Structure: ", bad_site_structure(soup)
-    print "W3C Fehler: ", count_w3c_errors(url)
-    print "Guestbook ja/nein:", find_guestbook(html)
-    print "Schlechte Phrasen: ", find_phrases(html)
-    print "Tote Links: ", find_dead_links(soup)
-    print "Background music?", music(soup)[0]
-    print "Autoloop", music(soup)[1]
-    print "Sind Bilder verzerrt?", distorted_images(url, soup)
-    print "Flash vorhanden?", get_flash(soup)
-    print "Popups? ", get_popups(soup)
-    print "Visitor Counter? ", visitor_counter(soup)
+   
+    #print url
+    #print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
+    #print "Schlechte Farben: ", find_bad_colors(tags)
+    #print "Anzahl Schriften: ", font_amount(tags)
+    #print "Marquee: ", get_html_textanimation(soup)
+    #print "Gif Amount: ", get_gifs(tags)
+    #print "Bad Structure: ", bad_site_structure(soup)
+    #print "W3C Fehler: ", count_w3c_errors(url)
+    #print "Guestbook ja/nein:", find_guestbook(html)
+    #print "Schlechte Phrasen: ", find_phrases(html)
+    #print "Tote Links: ", find_dead_links2(soup)
+    #print "Background music?", music(soup)[0]
+    #print "Autoloop", music(soup)[1]
+    #print "Sind Bilder verzerrt?", threads_images(soup)
+    #print "Flash vorhanden?", get_flash(soup)
+    #print "Popups? ", get_popups(soup)
+    #print "Visitor Counter? ", visitor_counter(soup)
     print "------------------------------"
+
+#Folgende Variable muss noch in die Datenbank geschrieben werden
+overall_w3c_errors_of_all_sites =  threads_w3c(all_urls)
+print overall_w3c_errors_of_all_sites
 
 
 
 # Zum Testen mit txt Datei, ohne DB:
+
 """
-with open ("../data/beispiel2.txt", "r") as html_file:
+with open ("../data/beispiel.txt", "r") as html_file:
     html = html_file.read().lower()
     soup = BeautifulSoup(html)
     tags = get_tags(soup)
-   
+"""
+"""
 url = "http://www.theworldsworstwebsiteever.com/"
 print "Sind Bilder verzerrt?", distorted_images(url, soup)
 print "Schlechte Schriftarten ja/nein: ", find_bad_fonts(tags)
@@ -297,3 +427,4 @@ print "Popups? ", get_popups(soup)
 print "Visitor Counter? ", visitor_counter(soup)
 
 """
+
