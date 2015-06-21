@@ -23,10 +23,10 @@ sys.setdefaultencoding("utf-8")
 engine = create_engine(config.DB_URI, echo=True)
 metadata = MetaData(bind=engine)
 wordtable = Table("wordlist", metadata, autoload=True)
-webpage = Table("document", metadata, autoload=True)
+webpage = Table("document", metadata, autoload=True) # webpage = "document" from the database
 
 # Loading the source code from the database
-s = select([webpage.c.html_document]) 
+s = select([webpage.c.html_document]) # wepage is a variable for document (see comment above), c = column, html_document = html sourcecode from document in the database
 result = s.execute()
 
 # Jede Ergebniszeile (row) ist eine Liste mit einem Inhalt (item).
