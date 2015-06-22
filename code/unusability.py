@@ -107,7 +107,7 @@ def get_dead_links(soup, links):
 def threads_links(soup):
     thread_list = []
     dead_links_counter = 0
-    threads = 10
+    threads = 150
     links = []
     for link in soup.find_all('a'):
         if link.get("href"):
@@ -189,7 +189,7 @@ def get_distorted_images(url, soup,img_tags):
 def threads_images(soup):
     thread_list = []
     amount_distorted_images = 0
-    threads = 10
+    threads = 150
     img_tags = soup.find_all("img")
     if len(img_tags)<threads:   
         threads = len(img_tags)
@@ -208,7 +208,7 @@ def threads_images(soup):
         amount_distorted_images += queue.get()
     distorted_images = 1 if len(img_tags) != 0 and float(amount_distorted_images)/len(img_tags)>0.01 else 0
     return distorted_images
-        
+     
 def get_w3c_errors(all_urls,w3c_errors):
     w3c_link = "https://validator.w3.org/check?uri="
     for url in all_urls:
@@ -223,11 +223,26 @@ def get_w3c_errors(all_urls,w3c_errors):
         else:
             errors_extracted = [0]
         w3c_errors[url] = errors_extracted[0]
+
+def get_w3c(url):
+    w3c_link = "https://validator.w3.org/check?uri="
+    
+        
+    check_url = urllib.urlopen(w3c_link+url)
+    content = check_url.read()
+    soup = BeautifulSoup(content)
+    errors= soup.find("h3" ,class_ = "invalid")
+    if errors is not None:
+        errors_extracted = re.findall(r'\d+', str(errors.get_text()))
+        errors_extracted = [int(x) for x in errors_extracted]
+    else:
+        errors_extracted = [0]
+    return errors_extracted[0]
         
         
 def threads_w3c(all_urls):
     thread_list = []
-    threads = 20
+    threads = 150
     beg = 0
     w3c_errors = {}
     if len(all_urls)<threads:   
@@ -252,12 +267,13 @@ websites = session.query(Document.html_document, Document.url).all()
 websites_data = []
 
 
-
+#Zeilen 272-328 = Alle Funktion + w3c mit Threads
+#########################################################################################################
+"""
 for url in websites:
     all_urls.append(url[1])
     
 overall_w3c_errors_of_all_sites =  threads_w3c(all_urls)
-
 
 for website,w3c in zip(sorted(websites,key=operator.itemgetter(1)),overall_w3c_errors_of_all_sites):
     website_dict = {}
@@ -282,16 +298,12 @@ for website,w3c in zip(sorted(websites,key=operator.itemgetter(1)),overall_w3c_e
     popups = get_popups(soup)
     counter = get_visitor_counter(soup)
     
+    
     factor = bad_fonts*4+bad_colors+fonts+gifs*0.5+marquee*2 
     +bad_structure*2+gb*2+phrases+dead_links+audio*7 
     +audio_loop*3+images*3+flash*2+popups*3+counter*2+w3c[1]
-   
-   
-   
-   
-   
-   
-   
+    
+    
     website_dict['url'] = url
     website_dict['font_existing'] = bad_fonts
     website_dict['colour'] = bad_colors
@@ -311,18 +323,78 @@ for website,w3c in zip(sorted(websites,key=operator.itemgetter(1)),overall_w3c_e
     website_dict['overall_score'] = factor
     website_dict['w3c'] = w3c[1]
     websites_data.append(website_dict)
-    
-for x in websites_data:
-    print x
+    print "rdy"
 
+"""
+##########################################################################################################
+
+
+#333-390 = Alles, aber w3c ohne Threads
+
+for website in websites:
+    website_dict = {}
+    html = website[0].lower()
+    url = website[1]
+    soup = BeautifulSoup(html)
+    all_urls.append(url)
+    tags = get_tags(soup)
+    bad_fonts = get_bad_fonts(tags)
+    bad_colors = get_bad_colors(tags)
+    fonts = get_font_amount(tags)
+    marquee = get_html_textanimation(soup)
+    gifs = get_gifs(tags)
+    bad_structure =  get_site_structure(soup)
+    gb =  get_guestbook(html)
+    phrases = get_phrases(html)
+    dead_links = threads_links(soup)
+    audio = get_music(soup)[0]
+    audio_loop = get_music(soup)[1]
+    images = threads_images(soup)
+    flash = get_flash(soup)
+    popups = get_popups(soup)
+    counter = get_visitor_counter(soup)
+    w3 = get_w3c(url)
+    
+    #factor = bad_fonts*4+bad_colors+fonts+gifs*0.5+marquee*2 
+    #+bad_structure*2+gb*2+phrases+dead_links+audio*7 
+    #+audio_loop*3+images*3+flash*2+popups*3+counter*2+w3c[1]
+    
+    factor = bad_fonts*4+bad_colors+fonts+gifs*0.5+marquee*2 
+    +bad_structure*2+gb*2+phrases+dead_links+audio*7 
+    +audio_loop*3+images*3+flash*2+popups*3+counter*2+w3
+    
+    website_dict['url'] = url
+    website_dict['font_existing'] = bad_fonts
+    website_dict['colour'] = bad_colors
+    website_dict['font_number'] = fonts
+    website_dict['textanimation'] = marquee
+    website_dict['number_of_gifs'] = gifs
+    website_dict['pagestructure'] = bad_structure
+    website_dict['guestbook'] =  gb
+    website_dict['phrases'] = phrases
+    website_dict['deadlinks'] = dead_links
+    website_dict['backgroundmusic'] = audio
+    website_dict['musicloop'] = audio_loop
+    website_dict['picture_distorted'] = images
+    website_dict['flash'] = flash
+    website_dict['popups'] = popups
+    website_dict['hitcounter'] = counter
+    website_dict['overall_score'] = factor
+    #website_dict['w3c'] = w3c[1]
+    website_dict['w3c'] = w3
+    websites_data.append(website_dict)
+    print "rdy"
+
+print websites_data
+
+##########################################################################################################
 for website in websites_data:
     for k,v in website.items():
         if k == 'url':
             url = v
         update = session.query(Document).filter(Document.url == url).update({k:v})
-    session.commit()
+        session.commit()
     print "rdy"
-    
 
 
 # Zum Testen
@@ -345,7 +417,7 @@ for website in websites:
     #print "W3C Fehler: ", count_w3c_errors(url)
     #print "Guestbook ja/nein:", get_guestbook(html)
     #print "Schlechte Phrasen: ", get_phrases(html)
-    #print "Tote Links: ", get_dead_links2(soup)
+    
     #print "Background music?", music(soup)[0]
     #print "Autoloop", music(soup)[1]
     #print "Sind Bilder verzerrt?", threads_images(soup)
@@ -354,6 +426,6 @@ for website in websites:
     #print "Visitor Counter? ", visitor_counter(soup)
     print "------------------------------"
 
-#Folgende Variable muss noch in die Datenbank geschrieben werden
+
 """
 
