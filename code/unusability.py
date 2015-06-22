@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -
+import operator
 import urllib
 import re
 import Queue
@@ -53,7 +54,7 @@ def get_font_amount(tags):
 def get_html_textanimation(soup):
     marquee_counter = 0
     for tag in soup.find_all("marquee"):
-        marquee_amount +=1
+        marquee_counter +=1
     return marquee_counter
 
 def get_bad_colors(tags):    
@@ -124,7 +125,7 @@ def threads_links(soup):
             t.start()
             thread_list.append(t)  
     for thread in thread_list:
-        t.join()    
+        thread.join()    
     while not queue.empty():
         dead_links_counter += queue.get()
     return dead_links_counter
@@ -211,7 +212,7 @@ def threads_images(soup):
 def get_w3c_errors(all_urls,w3c_errors):
     w3c_link = "https://validator.w3.org/check?uri="
     for url in all_urls:
-        print url
+        
         check_url = urllib.urlopen(w3c_link+url)
         content = check_url.read()
         soup = BeautifulSoup(content)
@@ -222,7 +223,7 @@ def get_w3c_errors(all_urls,w3c_errors):
         else:
             errors_extracted = [0]
         w3c_errors[url] = errors_extracted[0]
-        print errors_extracted[0]
+        
         
 def threads_w3c(all_urls):
     thread_list = []
@@ -241,7 +242,7 @@ def threads_w3c(all_urls):
             thread_list.append(t)
     for thread in thread_list:
         thread.join()
-    return w3c_errors
+    return sorted(w3c_errors.items(), key=operator.itemgetter(0))
  
 
 some_engine = create_engine(DB_URI, echo=DEBUG)
@@ -249,11 +250,21 @@ Session = sessionmaker(bind=some_engine)
 session = Session()
 websites = session.query(Document.html_document, Document.url).all()
 websites_data = []
-for website in websites:
+
+
+
+for url in websites:
+    all_urls.append(url[1])
+    
+overall_w3c_errors_of_all_sites =  threads_w3c(all_urls)
+
+
+for website,w3c in zip(sorted(websites,key=operator.itemgetter(1)),overall_w3c_errors_of_all_sites):
     website_dict = {}
     html = website[0].lower()
     url = website[1]
     soup = BeautifulSoup(html)
+    all_urls.append(url)
     tags = get_tags(soup)
     bad_fonts = get_bad_fonts(tags)
     bad_colors = get_bad_colors(tags)
@@ -270,11 +281,17 @@ for website in websites:
     flash = get_flash(soup)
     popups = get_popups(soup)
     counter = get_visitor_counter(soup)
-
+    
     factor = bad_fonts*4+bad_colors+fonts+gifs*0.5+marquee*2 
     +bad_structure*2+gb*2+phrases+dead_links+audio*7 
-    +audio_loop*3+images*3+flash*2+popups*3+counter*2
-    
+    +audio_loop*3+images*3+flash*2+popups*3+counter*2+w3c[1]
+   
+   
+   
+   
+   
+   
+   
     website_dict['url'] = url
     website_dict['font_existing'] = bad_fonts
     website_dict['colour'] = bad_colors
@@ -292,13 +309,20 @@ for website in websites:
     website_dict['popups'] = popups
     website_dict['hitcounter'] = counter
     website_dict['overall_score'] = factor
+    website_dict['w3c'] = w3c[1]
     websites_data.append(website_dict)
+    
+for x in websites_data:
+    print x
+
 for website in websites_data:
     for k,v in website.items():
         if k == 'url':
             url = v
         update = session.query(Document).filter(Document.url == url).update({k:v})
     session.commit()
+    print "rdy"
+    
 
 
 # Zum Testen
@@ -331,6 +355,5 @@ for website in websites:
     print "------------------------------"
 
 #Folgende Variable muss noch in die Datenbank geschrieben werden
-overall_w3c_errors_of_all_sites =  threads_w3c(all_urls)
-print overall_w3c_errors_of_all_sites
 """
+
