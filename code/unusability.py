@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -
 import operator
-import urllib
+import urllib2
+
+
 import re
 import Queue
 import time
@@ -11,7 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from PIL import Image
-import urllib
+import urllib2
 from defaultconfig import DB_URI, DEBUG
 from threading import Thread
 
@@ -71,8 +73,8 @@ def get_gifs(tags):
     
 def get_site_structure(soup):
     bad_structure = 1
-    structure_tags = ["h1","h2","h3","h4","h5","h6","header", "nav", "p", "div"] # p muss wahrscheinlich raus, zuviel benutzt
-    if len(soup.find_all([x for x in structure_tags]))>10:
+    structure_tags = ["h1","h2","h3","h4","h5","h6","header", "nav", "div"] 
+    if len(soup.find_all([x for x in structure_tags]))>15:
         bad_structure = 0
     return bad_structure
 
@@ -96,17 +98,15 @@ def get_dead_links(soup, links):
     dead_links = 0
     for index, link in enumerate(links):
         try:
-            r = requests.get(link,allow_redirects=False)
+            r = requests.get(link,allow_redirects=False, timeout=3)
             if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
                 dead_links = 1   
                 queue.put(dead_links)
-        except requests.exceptions.ConnectionError:
+        except:
             dead_links = 1
             queue.put(dead_links)
-        except requests.exceptions.ChunkedEncodingError: 
             pass
-#der macht jetzt weiter aber dann kommt folgender Fehler: error: [Errno 10054] Eine vorhandene Verbindung wurde vom Remotehost geschlossen
-#programm bricht nicht ab aber macht nicht weiter
+
         
 def threads_links(soup):
     thread_list = []
@@ -178,12 +178,17 @@ def get_distorted_images(url, soup,img_tags):
     for tag in img_tags:
         if "width" in str(img_tags) and "height" in str(img_tags):
             try:
-                im=Image.open(urllib.urlopen(url+tag.get("src")))
+                im=Image.open(urllib2.urlopen(url+tag.get("src")))
             except IOError:
                 pass
                 #print "Error opening image...",url+tag.get("src")
             except TypeError:
                 pass
+            except urllib2.HTTPError:
+                pass
+            except: #hier kommt ab und zu InvalidURL, aber der nimmt den ExceptionType nicht an..
+                pass
+                #print url+tag.get("src")
             else:   
                 try:
                     if round(float(im.size[0])/im.size[1],2) != round(float(tag.get("width"))/float(tag.get("height")),2):
@@ -212,14 +217,14 @@ def threads_images(soup):
         thread.join()
     while not queue.empty():
         amount_distorted_images += queue.get()
-    distorted_images = 1 if len(img_tags) != 0 and float(amount_distorted_images)/len(img_tags)>0.01 else 0
+    distorted_images = 1 if len(img_tags) != 0 and float(amount_distorted_images)/len(img_tags)>0.05 else 0
     return distorted_images
      
 def get_w3c_errors(all_urls,w3c_errors):
     w3c_link = "https://validator.w3.org/check?uri="
     for url in all_urls:
         
-        check_url = urllib.urlopen(w3c_link+url)
+        check_url = urllib2.urlopen(w3c_link+url)
         content = check_url.read()
         soup = BeautifulSoup(content)
         errors= soup.find("h3" ,class_ = "invalid")
@@ -234,7 +239,7 @@ def get_w3c(url):
     w3c_link = "https://validator.w3.org/check?uri="
     
         
-    check_url = urllib.urlopen(w3c_link+url)
+    check_url = urllib2.urlopen(w3c_link+url)
     content = check_url.read()
     soup = BeautifulSoup(content)
     errors= soup.find("h3" ,class_ = "invalid")
@@ -390,10 +395,9 @@ for website in websites:
     website_dict['w3c'] = w3
     websites_data.append(website_dict)
     x+=1
-    print x
+    print "Webseite %s von %s fertig" %(x,len(websites))
 
-for x in websites_data:
-    print x
+
 
 ##########################################################################################################
 for website in websites_data:
