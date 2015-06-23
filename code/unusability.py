@@ -101,7 +101,7 @@ def get_dead_links(soup, links):
         try:
             
             r = requests.get(link,allow_redirects=False, timeout=1)
-            print r.elapsed
+            
             if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
                 dead_links = 1   
                 queue.put(dead_links)
