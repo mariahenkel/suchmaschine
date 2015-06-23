@@ -3,6 +3,7 @@ import operator
 import urllib2
 
 
+
 import re
 import Queue
 import time
@@ -98,7 +99,9 @@ def get_dead_links(soup, links):
     dead_links = 0
     for index, link in enumerate(links):
         try:
-            r = requests.get(link,allow_redirects=False, timeout=3)
+            
+            r = requests.get(link,allow_redirects=False, timeout=1)
+            print r.elapsed
             if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
                 dead_links = 1   
                 queue.put(dead_links)
