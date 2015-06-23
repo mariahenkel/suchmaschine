@@ -96,18 +96,22 @@ def get_dead_links(soup, links):
     dead_links = 0
     for index, link in enumerate(links):
         try:
-            r = requests.get(link)
+            r = requests.get(link,allow_redirects=False)
             if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
                 dead_links = 1   
                 queue.put(dead_links)
         except requests.exceptions.ConnectionError:
             dead_links = 1
             queue.put(dead_links)
+        except requests.exceptions.ChunkedEncodingError: 
+            pass
+#der macht jetzt weiter aber dann kommt folgender Fehler: error: [Errno 10054] Eine vorhandene Verbindung wurde vom Remotehost geschlossen
+#programm bricht nicht ab aber macht nicht weiter
         
 def threads_links(soup):
     thread_list = []
     dead_links_counter = 0
-    threads = 150
+    threads = 100
     links = []
     for link in soup.find_all('a'):
         if link.get("href"):
@@ -178,6 +182,8 @@ def get_distorted_images(url, soup,img_tags):
             except IOError:
                 pass
                 #print "Error opening image...",url+tag.get("src")
+            except TypeError:
+                pass
             else:   
                 try:
                     if round(float(im.size[0])/im.size[1],2) != round(float(tag.get("width"))/float(tag.get("height")),2):
@@ -189,7 +195,7 @@ def get_distorted_images(url, soup,img_tags):
 def threads_images(soup):
     thread_list = []
     amount_distorted_images = 0
-    threads = 150
+    threads = 100
     img_tags = soup.find_all("img")
     if len(img_tags)<threads:   
         threads = len(img_tags)
@@ -242,7 +248,7 @@ def get_w3c(url):
         
 def threads_w3c(all_urls):
     thread_list = []
-    threads = 150
+    threads = 100
     beg = 0
     w3c_errors = {}
     if len(all_urls)<threads:   
@@ -330,7 +336,7 @@ for website,w3c in zip(sorted(websites,key=operator.itemgetter(1)),overall_w3c_e
 
 
 #333-390 = Alles, aber w3c ohne Threads
-
+x = 0
 for website in websites:
     website_dict = {}
     html = website[0].lower()
@@ -383,16 +389,17 @@ for website in websites:
     #website_dict['w3c'] = w3c[1]
     website_dict['w3c'] = w3
     websites_data.append(website_dict)
-    print "rdy"
+    x+=1
+    print x
 
-print websites_data
+for x in websites_data:
+    print x
 
 ##########################################################################################################
 for website in websites_data:
-    for k,v in website.items():
-        if k == 'url':
-            url = v
-        update = session.query(Document).filter(Document.url == url).update({k:v})
+    for x in website.items():
+  
+        update = session.query(Document).filter(Document.url == website.items()[5][1]).update({k:v for k,v in website.items()})
         session.commit()
     print "rdy"
 

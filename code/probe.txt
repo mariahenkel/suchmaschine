@@ -1,0 +1,1 @@
+{'font_existing': 0, 'w3c': 64, 'hitcounter': 0, 'picture_distorted': 0, 'popups': 0, 'url': u'http://shining-sunflower.com/sun-home.html', 'phrases': 0, 'colour': 5, 'flash': 0, 'deadlinks': 3, 'pagestructure': 0, 'overall_score': 20.0, 'musicloop': 0, 'number_of_gifs': 26, 'textanimation': 0, 'backgroundmusic': 0, 'font_number': 2, 'guestbook': 0}
