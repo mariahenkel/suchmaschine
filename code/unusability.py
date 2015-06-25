@@ -243,10 +243,10 @@ websites_data = []
 
 
 website_counter = 0
-beg, end = -3, 0
+beg, end = -50, 0
 while end < len(websites):
-    beg += 3
-    end += 3
+    beg += 50
+    end += 50
     if end > len(websites):
         end = len(websites)
     for website in websites[beg:end]:
