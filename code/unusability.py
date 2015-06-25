@@ -239,7 +239,7 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
                gb, phrases, dead_links, audio, audio_loop, images, flash, popups, counter, w3):
     bad_fonts_max = 8
     bad_colors_max = 8
-    font_amount_max = 7
+    font_amount_max = 5
     marquee_max = 7
     gifs_max = 10
     bad_structure_max = 3
@@ -247,10 +247,10 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     phrases_max = 4
     dead_links_max = 7
     audio_max = 10
-    audio_loop_max = 5
+    audio_loop_max = 6
     images_max = 8
     flash_max = 6
-    popups_max = 6
+    popups_max = 7
     counter_max = 3
     w3c_max = 5
     
@@ -258,7 +258,7 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     bad_colors_value = bad_colors_max if bad_colors > bad_colors_max else bad_colors 
     font_amount_value = font_amount_max if fonts > font_amount_max else fonts
     marquee_value = marquee_max if marquee*0.7 > marquee_max else marquee*0.7
-    gif_value = gifs_max if gifs/gifs_max > gifs_max else gifs/gifs_max
+    gif_value = gifs_max if float(gifs)/gifs_max > gifs_max else float(gifs)/gifs_max
     bad_structure_value = bad_structure_max if bad_structure == 1 else 0
     guestbook_value = guestbook_max if gb == 1 else 0
     phrases_value = phrases_max if phrases*2 > phrases_max else phrases*2
@@ -269,7 +269,7 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     flash_value = flash_max if flash == 1 else 0
     popups_value = popups_max if popups == 1 else 0
     counter_value = counter_max if counter == 1 else 0
-    w3c_value = w3c_max if w3/20 > gifs_max else w3/20
+    w3c_value = w3c_max if float(w3)/20 > w3c_max else float(w3)/20
     score = bad_fonts_value + bad_colors_value + font_amount_value + marquee_value + gif_value + bad_structure_value + guestbook_value + phrases_value + dead_links_value + audio_value +audio_loop_value + images_value + flash_value + popups_value + counter_value
     return score
     
