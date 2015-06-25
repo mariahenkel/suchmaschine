@@ -234,11 +234,50 @@ def get_w3c(url):
         errors_extracted = [0]
     return errors_extracted[0]
         
-        
+
+def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure, 
+               gb, phrases, dead_links, audio, audio_loop, images, flash, popups, counter, w3):
+    bad_fonts_max = 8
+    bad_colors_max = 8
+    font_amount_max = 7
+    marquee_max = 7
+    gifs_max = 10
+    bad_structure_max = 3
+    guestbook_max = 3
+    phrases_max = 4
+    dead_links_max = 7
+    audio_max = 10
+    audio_loop_max = 5
+    images_max = 8
+    flash_max = 6
+    popups_max = 6
+    counter_max = 3
+    w3c_max = 5
+    
+    bad_fonts_value = bad_fonts_max if bad_fonts == 1 else 0
+    bad_colors_value = bad_colors_max if bad_colors > bad_colors_max else bad_colors 
+    font_amount_value = font_amount_max if fonts > font_amount_max else fonts
+    marquee_value = marquee_max if marquee*0.7 > marquee_max else marquee*0.7
+    gif_value = gifs_max if gifs/gifs_max > gifs_max else gifs/gifs_max
+    bad_structure_value = bad_structure_max if bad_structure == 1 else 0
+    guestbook_value = guestbook_max if gb == 1 else 0
+    phrases_value = phrases_max if phrases*2 > phrases_max else phrases*2
+    dead_links_value = dead_links_max if dead_links*0.7 > dead_links_max else dead_links*0.7 
+    audio_value = audio_max if audio == 1 else 0
+    audio_loop_value = audio_loop_max if audio_loop == 1 else 0  
+    images_value = images_max if images == 1 else 0 # Momentan wird einfach die Gewichtung aus der Funktion benutzt - noch ändern? D.h. oben kein Boolean, dafür hier gewichten?
+    flash_value = flash_max if flash == 1 else 0
+    popups_value = popups_max if popups == 1 else 0
+    counter_value = counter_max if counter == 1 else 0
+    w3c_value = w3c_max if w3/20 > gifs_max else w3/20
+    score = bad_fonts_value + bad_colors_value + font_amount_value + marquee_value + gif_value + bad_structure_value + guestbook_value + phrases_value + dead_links_value + audio_value +audio_loop_value + images_value + flash_value + popups_value + counter_value
+    return score
+    
+    
 some_engine = create_engine(DB_URI, echo=DEBUG)
 Session = sessionmaker(bind=some_engine)    
 session = Session()
-websites = session.query(Document.html_document, Document.url, Document.font_number).all()
+websites = session.query(Document.html_document, Document.url, Document.overall_score).all()
 websites_data = []
 
 
@@ -275,10 +314,10 @@ while end < len(websites):
             popups = get_popups(soup)
             counter = get_visitor_counter(soup)
             w3 = get_w3c(url)
-               
-            factor = bad_fonts*4+bad_colors+fonts+gifs*0.5+marquee*2 
-            +bad_structure*2+gb*2+phrases+dead_links+audio*7 
-            +audio_loop*3+images*3+flash*2+popups*3+counter*2+w3
+            
+            unusability = get_factor(bad_fonts, bad_colors, fonts, marquee,
+                          gifs, bad_structure, gb, phrases, dead_links, audio, audio_loop,
+                          images, flash, popups, counter, w3)
             
             website_dict['url'] = url
             website_dict['font_existing'] = bad_fonts
@@ -296,8 +335,8 @@ while end < len(websites):
             website_dict['flash'] = flash
             website_dict['popups'] = popups
             website_dict['hitcounter'] = counter
-            website_dict['overall_score'] = factor
             website_dict['w3c'] = w3
+            website_dict['overall_score'] = unusability
             websites_data.append(website_dict)
             website_counter+=1
             print "Webseite %s von %s fertig" %(website_counter,len(websites))
