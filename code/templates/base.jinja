@@ -9,7 +9,8 @@
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     {%if sugly %}
     <link href="{{ url_for('static', filename='css/geobootstrap.min.css') }}" rel="stylesheet">
-  {% endif %}
+    {% endif %}
+    <link href="static/animated_favicon.gif" rel="icon" type="image/x-icon">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -31,6 +32,21 @@
   {% endwith %}
   {% block content%}Here be content...{% endblock %}
 </div>
+            <br>
+            <br>     
+            <br>
+            <br>
+            <br>
+         
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-md-offset-4">
+            <br>
+            © smonky 2015 <a href="{{ url_for('impressum') }}">Impressum</a>
+            </div>
+        </div>
+</footer>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="{{ url_for('static', filename='js/jquery-1.11.1.min.js') }}"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->

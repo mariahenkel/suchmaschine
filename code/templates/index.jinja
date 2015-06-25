@@ -49,12 +49,19 @@
 {% if results %}
 <div class="row">
 <div class="col-md-6 col-md-offset-3">
-    <h3>Results for Smonky-Normal</h3>
-    <ul>
+    <h3>Results</h3>
+
         {% for result in results %}
-            <li>{{ result.title | safe }}, <a href="{{ result.url | safe }}">{{ result.url | safe }}</a></li>
+			<div class="panel panel-warning">
+				<div class="panel-heading">
+				<h3 class="panel-title">{{ result.title | safe }}</h3>
+			</div>
+				<div class="panel-body">
+					<a href="{{ result.url | safe }}">{{ result.url | safe }}</a>
+				</div>
+			</div>
         {% endfor %}
-    </ul>
+
 {% endif %}
 </p>
 </p>

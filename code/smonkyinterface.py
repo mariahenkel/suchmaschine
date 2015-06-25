@@ -107,6 +107,9 @@ def index():
     form = SearchQuery()
     return render_template('index.jinja', form=form)
 
+@app.route('/impressum')
+def impressum():
+    return render_template('impressum.jinja')
 
 @app.route('/normal', methods=["GET", "POST"])
 def normalsearch():
