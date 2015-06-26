@@ -95,10 +95,8 @@ def get_phrases(html):
 def get_dead_links(soup, links):
     dead_links = 0
     for index, link in enumerate(links):
-        try:
-            
-            r = requests.get(link,allow_redirects=False, timeout=1)
-            
+        try:           
+            r = requests.get(link,allow_redirects=False, timeout=1)            
             if not str(r.status_code).startswith("2") and not str(r.status_code).startswith("3"):
                 dead_links = 1   
                 queue.put(dead_links)
@@ -220,19 +218,20 @@ def threads_images(soup):
      
 
 def get_w3c(url):
-    w3c_link = "https://validator.w3.org/check?uri="
-    
-        
+    w3c_link = "https://validator.w3.org/check?uri="  
     check_url = urllib2.urlopen(w3c_link+url)
-    content = check_url.read()
-    soup = BeautifulSoup(content)
-    errors= soup.find("h3" ,class_ = "invalid")
-    if errors is not None:
-        errors_extracted = re.findall(r'\d+', str(errors.get_text()))
-        errors_extracted = [int(x) for x in errors_extracted]
+    if str(check_url.getcode()).startswith("2") or str(check_url.getcode()).startswith("3"):
+        content = check_url.read()
+        soup = BeautifulSoup(content)
+        errors= soup.find("h3" ,class_ = "invalid")
+        if errors is not None:
+            errors_extracted = re.findall(r'\d+', str(errors.get_text()))
+            errors_extracted = [int(x) for x in errors_extracted]
+        else:
+            errors_extracted = [0]
+        return errors_extracted[0]
     else:
-        errors_extracted = [0]
-    return errors_extracted[0]
+        pass
         
 
 def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure, 
