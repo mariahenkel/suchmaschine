@@ -11,13 +11,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from PIL import Image
-import urllib2
+
 from defaultconfig import DB_URI, DEBUG
 from threading import Thread
 
 Base = declarative_base()
 queue = Queue.Queue()
-all_urls = []
+
 
 def get_tags(soup):
     tag_attrs_lists = [] 
@@ -193,7 +193,7 @@ def get_distorted_images(url, soup,img_tags):
                 except ZeroDivisionError:
                     pass
     
-def threads_images(soup):
+def threads_images(soup,url):
     thread_list = []
     amount_distorted_images = 0
     threads = 100
@@ -271,31 +271,21 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     w3c_value = w3c_max if float(w3)/20 > w3c_max else float(w3)/20
     score = bad_fonts_value + bad_colors_value + font_amount_value + marquee_value + gif_value + bad_structure_value + guestbook_value + phrases_value + dead_links_value + audio_value +audio_loop_value + images_value + flash_value + popups_value + counter_value
     return score
-    
-    
+   
+
 some_engine = create_engine(DB_URI, echo=DEBUG)
 Session = sessionmaker(bind=some_engine)    
 session = Session()
 websites = session.query(Document.html_document, Document.url, Document.overall_score).all()
-websites_data = []
 
-
-website_counter = 0
-beg, end = -50, 0
-while end < len(websites):
-    beg += 50
-    end += 50
-    if end > len(websites):
-        end = len(websites)
-    for website in websites[beg:end]:
-        if website[2] != None:
-            website_counter += 1
+def overall(websites, website_dict):
+    for site in websites:
+        if site[2] != None:
+            pass
         else:
-            website_dict = {}
-            html = website[0].lower()
-            url = website[1]
+            html = site[0]
+            url = site[1]
             soup = BeautifulSoup(html)
-            all_urls.append(url)
             tags = get_tags(soup)
             bad_fonts = get_bad_fonts(tags)
             bad_colors = get_bad_colors(tags)
@@ -308,16 +298,14 @@ while end < len(websites):
             dead_links = threads_links(soup)
             audio = get_music(soup)[0]
             audio_loop = get_music(soup)[1]
-            images = threads_images(soup)
+            images = threads_images(soup,url)
             flash = get_flash(soup)
             popups = get_popups(soup)
             counter = get_visitor_counter(soup)
             w3 = get_w3c(url)
-            
             unusability = get_factor(bad_fonts, bad_colors, fonts, marquee,
                           gifs, bad_structure, gb, phrases, dead_links, audio, audio_loop,
                           images, flash, popups, counter, w3)
-            
             website_dict['url'] = url
             website_dict['font_existing'] = bad_fonts
             website_dict['colour'] = bad_colors
@@ -337,14 +325,40 @@ while end < len(websites):
             website_dict['w3c'] = w3
             website_dict['overall_score'] = unusability
             websites_data.append(website_dict)
-            website_counter+=1
-            print "Webseite %s von %s fertig" %(website_counter,len(websites))
+    
 
+def get_unusability(websites):
+    thread_list = []
+    threads = 99
+    beg = 0
+    if len(websites)<threads:   
+        threads = len(websites)
+    end = len(websites)/threads
+    while beg < len(websites):
+        website_dict = {}
+        t = Thread(target=overall, args=([websites[beg:end], website_dict]))
+        
+        beg +=len(websites)/threads
+        end += len(websites)/threads
+        t.start()
+        thread_list.append(t)
+
+    for thread in thread_list:
+        thread.join()
+    return websites_data
+
+websites_data = []
+
+beg, end = -50, 0
+while end < len(websites):
+    beg += 50
+    end += 50   
+    if end > len(websites):
+        end = len(websites)
+    websites_data = get_unusability(websites[beg:end])
     for website in websites_data:
         for x in website.items():
             update = session.query(Document).filter(Document.url == website.items()[5][1]).update({k:v for k,v in website.items()})
             session.commit()
-        print "rdy"
+    print "Seite %s bis %s in die DB geschrieben" %(beg+1, end)
     websites_data = []
-
-
