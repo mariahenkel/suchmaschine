@@ -12,7 +12,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from PIL import Image
 
-from defaultconfig import DB_URI, DEBUG
+from config import DB_URI, DEBUG
 from threading import Thread
 
 Base = declarative_base()
