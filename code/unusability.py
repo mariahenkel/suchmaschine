@@ -38,9 +38,9 @@ def get_bad_fonts(tags):
             if any(font in s for s in tags):
                 bad_fonts_counter += 1
         if bad_fonts_counter == 0:
-            bad_fonts = 0
+            bad_fonts = False
         else:
-            bad_fonts = 1
+            bad_fonts = True
     return bad_fonts
 
 
@@ -76,19 +76,19 @@ def get_gifs(tags):
 
 
 def get_site_structure(soup):
-    bad_structure = 1
+    bad_structure = True
     structure_tags = [
         "h1", "h2", "h3", "h4", "h5", "h6", "header", "nav", "div"]
     if len(soup.find_all([x for x in structure_tags])) > 15:
-        bad_structure = 0
+        bad_structure = False
     return bad_structure
 
 
 def get_guestbook(html):
     if "guestbook" in html:
-        guestbook = 1
+        guestbook = True
     else:
-        guestbook = 0
+        guestbook = False
     return guestbook
 
 
@@ -146,43 +146,43 @@ def threads_links(soup):
 def get_music(soup):
     audiofile_endings = [".mp3", ".wav", ".wma", ".ogg", ".mid"]
     autoplay_loop_strings = ["autoplay", "loop", ".play("]
-    audio = 0
-    auto_loop = 0
+    audio = False
+    auto_loop = False
     tag_content = []
     for tag in soup.find_all(True):
         tag_content.append(tag)
     if any([extension in str(tag_content) for extension in audiofile_endings]):
-        audio = 1
+        audio = True
         if any([item in str(tag_content) for item in autoplay_loop_strings]):
-            auto_loop = 1
+            auto_loop = True
 
     return audio, auto_loop
 
 
 def get_flash(soup):
     flash_endings = [".swf", ".fla", ".flv", ".swc"]
-    flash = 0
+    flash = False
     tag_content = []
     for tag in soup.find_all(True):
         tag_content.append(tag)
     if any([extension in str(tag_content) for extension in flash_endings]):
-        flash = 1
+        flash = True
     return flash
 
 
 def get_popups(soup):
-    popups = 0
+    popups = False
     if "window.open(" in str(soup.find_all("script")):
-        popups = 1
+        popups = True
     return popups
 
 
 def get_visitor_counter(soup):
-    vis_counter = 0
+    vis_counter = False
     with open("../data/visitor_counter_provider.txt", "r") as provider:
         visitor_sites = [line.lower().rstrip("\n") for line in provider]
     if any([site in str(soup.find_all("a")) for site in visitor_sites]):
-        vis_counter = 1
+        vis_counter = True
     return vis_counter
 
 
@@ -232,8 +232,8 @@ def threads_images(soup, url):
         thread.join()
     while not queue.empty():
         amount_distorted_images += queue.get()
-    distorted_images = 1 if len(img_tags) != 0 and float(
-        amount_distorted_images) / len(img_tags) > 0.05 else 0
+    distorted_images = True if len(img_tags) != 0 and float(
+        amount_distorted_images) / len(img_tags) > 0.05 else False
     return distorted_images
 
 
@@ -273,27 +273,25 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     counter_max = 3
     w3c_max = 5
 
-    bad_fonts_value = bad_fonts_max if bad_fonts == 1 else 0
+    bad_fonts_value = bad_fonts_max if bad_fonts == True else 0
     bad_colors_value = bad_colors_max if bad_colors > bad_colors_max else bad_colors
     font_amount_value = font_amount_max if fonts > font_amount_max else fonts
     marquee_value = marquee_max if marquee * \
         0.7 > marquee_max else marquee * 0.7
     gif_value = gifs_max if float(
         gifs) / gifs_max > gifs_max else float(gifs) / gifs_max
-    bad_structure_value = bad_structure_max if bad_structure == 1 else 0
-    guestbook_value = guestbook_max if gb == 1 else 0
+    bad_structure_value = bad_structure_max if bad_structure == True else 0
+    guestbook_value = guestbook_max if gb == True else 0
     phrases_value = phrases_max if phrases * \
         2 > phrases_max else phrases * 2
     dead_links_value = dead_links_max if dead_links * \
         0.7 > dead_links_max else dead_links * 0.7
-    audio_value = audio_max if audio == 1 else 0
-    audio_loop_value = audio_loop_max if audio_loop == 1 else 0
-    # Momentan wird einfach die Gewichtung aus der Funktion benutzt - noch
-    # ändern? D.h. oben kein Boolean, dafür hier gewichten?
-    images_value = images_max if images == 1 else 0
-    flash_value = flash_max if flash == 1 else 0
-    popups_value = popups_max if popups == 1 else 0
-    counter_value = counter_max if counter == 1 else 0
+    audio_value = audio_max if audio == True else 0
+    audio_loop_value = audio_loop_max if audio_loop == True else 0
+    images_value = images_max if images == True else 0
+    flash_value = flash_max if flash == True else 0
+    popups_value = popups_max if popups == True else 0
+    counter_value = counter_max if counter == True else 0
     w3c_value = w3c_max if float(w3) / 20 > w3c_max else float(w3) / 20
     score = bad_fonts_value + bad_colors_value + font_amount_value + marquee_value + gif_value + bad_structure_value + guestbook_value + \
         phrases_value + dead_links_value + audio_value + audio_loop_value + \
