@@ -1,23 +1,25 @@
 from nltk.corpus import stopwords   # stopwords to detect language
 from nltk import wordpunct_tokenize # function to split up our words
 from sys import stdin               # how else should we get our input :)
- 
-def get_language_likelihood(input_text):
+import re			# import regex 
+
+def get_language_likelihood(website):
     """Return a dictionary of languages and their likelihood of being the 
     natural language of the input text
     """
+    """ expression will filter everything between <script></script> tags and remove the tags as well """
+    regex = re.compile(r"<script[^>]*>(.*?)</script>", re.IGNORECASE|re.DOTALL)
+    website = regex.sub(website, "")
  
-    input_text = input_text.lower()
-    input_words = wordpunct_tokenize(input_text)
-    
- 
-    language_likelihood = {}
-    total_matches = 0
+   """ tokenize lower case web source """
+    website = website.lower()
+    words = wordpunct_tokenize(website)
+   
+    candidates = {}
     for language in stopwords._fileids:
-        language_likelihood[language] = len(set(input_words) &
-                set(stopwords.words(language)))
- 
-    return language_likelihood
+        candidates[language] = len(set(words) & set(stopwords.words(language)))
+                
+    return candidates
  
 def get_language(input_text):
     """Return the most likely language of the given text
