@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import re
 
 # Die folgende Zeile führt unter Linux zu einer Fehlermeldung. Bitte ggf. (ent)kommentieren.
 #from BeautifulSoup import BeautifulSoup
@@ -15,7 +14,7 @@ from bs4 import BeautifulSoup, Comment  # Import BeautifulSoup und Comment
 
 # SQLAlchemy imports
 
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table
 import config
 from math import log
@@ -23,8 +22,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import DB_URI, DEBUG
 from models import Wordlist, Document, ConsistsOf
-#from models import wordlist, document
-#from database import db_session
 
 # Encoding for the file
 reload(sys)
@@ -101,37 +98,44 @@ def indexer(document):
 
         word_pos = 0  # Counter for word position
         stemmer = PorterStemmer()
-        length_website = 0  # Counter for text length
+        length_website = len(word_list)
 
-        dict_duplicate = {}
         for element in word_list:
-            length_website = length_website + 1
             word_count = word_list.count(element)
-            if element not in dict_duplicate.keys():
-                dict_duplicate[element] = True
-                try:
-                    word_stem = stemmer.stem(element)
-                    # Number of the word in this text
-                    if element in stop:
-                        is_stop = 1
-                    else:
-                        is_stop = 0
-                    word_insert = wordtable.insert().execute(
-                        word=element, stem=word_stem, stopword=is_stop, number=word_count)
-                    word_id = word_insert.inserted_primary_key
-                    wdf_word = log(word_count) / log(2) + 1 / \
-                        log(length_website) / log(2)
-                    #
-                    relation.insert().execute(
-                        document_documentid=document.id, wordlist_wordid=word_id[0], wdf=wdf_word)
-                    word_pos = word_pos + 1
-                except:
-                    pass
-            else:
+            word = session.query(Wordlist).filter(
+                Wordlist.word == element).first()
+            if not word:
+                # create a new word
+                word_pos = word_pos + 1
+                word = Wordlist()
+                word.word = element
+                word.stem = stemmer.stem(element)
+                word.stopword = element in stop
+                session.add(word)
+                session.commit()
+
+            # check if the relation for this word and document already
+            # exists
+            print document.id, word.id
+            existing_consist_of = session.query(ConsistsOf).filter(
+                ConsistsOf.document_documentid == document.id).filter(
+                ConsistsOf.wordlist_wordid == word.id).first()
+
+            if not existing_consist_of:
+                # calculate wdf
                 wdf_word = log(word_count) / log(2) + 1 / \
                     log(length_website) / log(2)
-                relation.update(
-                    document_documentid=document.id, wordlist_wordid=word_id[0], wdf=wdf_word)
+
+                # create relationship between word and document
+                consists_of = ConsistsOf()
+                consists_of.document_documentid = document.id
+                consists_of.wordlist_wordid = word.id
+                consists_of.wdf = wdf_word
+                consists_of.stopword = 0
+                consists_of.sentenceno = 0
+                consists_of.position = word_pos
+                session.add(consists_of)
+                session.commit()
 
 
 if __name__ == "__main__":
@@ -146,13 +150,13 @@ if __name__ == "__main__":
     # calculate idf
     N = session.query(Document).count()
     dictidf = {}
-    words = session.query(ConsistsOf.wordlist_wordid).all()
-    # print words
+    words = session.query(ConsistsOf.wordlist_wordid).yield_per(100)
+
     for element in words:
         if element not in dictidf.keys():
             dictidf[element] = 1
         else:
-            dictidf[element] = dictidf[element] + 1
+            dictidf[element] += 1
     print dictidf
 
     # for values in dictidf.values():
