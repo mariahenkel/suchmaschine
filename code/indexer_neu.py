@@ -84,19 +84,17 @@ def indexer(doc_id, sites):
 					is_stop = 1
 				else:
 					is_stop = 0
-				#word_insert = wordtable.insert().execute(word=element, stem=word_stem, stopword=is_stop, number=word_count)
-				#word_id = word_insert.inserted_primary_key
-				#wdf_word = log(word_count)/log(2) +1 / log (length_website) /log(2)
+				word_insert = wordtable.insert().execute(word=element, stem=word_stem, stopword=is_stop, number=word_count)
+				word_id = word_insert.inserted_primary_key
+				wdf_word = log(word_count)/log(2) +1 / log (length_website) /log(2)
 				#
-				#relation.insert().execute(document_documentid=doc_id, wordlist_wordid=word_id[0], wdf=wdf_word)
+				relation.insert().execute(document_documentid=doc_id, wordlist_wordid=word_id[0], wdf=wdf_word)
 				word_pos = word_pos+1
 			except:
 				pass
 		else:
-			pass
-		# Number of the word in this text
-			#wdf_word = log(word_count)/log(2) +1 / log (length_website) /log(2)
-			#relation.insert().execute(document_documentid=doc_id, wordlist_wordid=word_id[0], wdf=wdf_word)
+			wdf_word = log(word_count)/log(2) +1 / log (length_website) /log(2)
+			relation.insert().execute(document_documentid=doc_id, wordlist_wordid=word_id[0], wdf=wdf_word)
 
 
 if __name__ == "__main__":	
@@ -107,13 +105,21 @@ if __name__ == "__main__":
 		indexer(element[0],element[1])
 
 
-N = session.query(Document).count()
-print N
-words=session.query(Wordlist.word).all()
-print words
-for element in words:
-	n = words.count(element)
-	print n
-	IDF = float(log(N/n))+1/log(2)
+	N = session.query(Document).count()
+	dictidf={}
+	words=session.query(ConsistsOf.wordlist_wordid).all()
+	#print words
+	for element in words:
+		if element not in dictidf.keys():
+			dictidf[element]=1
+		else:
+			dictidf[element]=dictidf[element]+1
+	print dictidf
+
+	
+
+	#for values in dictidf.values():
+	#	IDF = float(log(N/values))+1/log(2)
+	#print IDF
 #wordtable.update().execute(idf=IDF) 
 
