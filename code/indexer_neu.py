@@ -94,7 +94,7 @@ def indexer(doc_id, sites):
 				pass
 		else:
 			wdf_word = log(word_count)/log(2) +1 / log (length_website) /log(2)
-			relation.insert().execute(document_documentid=doc_id, wordlist_wordid=word_id[0], wdf=wdf_word)
+			relation.update(document_documentid=doc_id, wordlist_wordid=word_id[0], wdf=wdf_word)
 
 
 if __name__ == "__main__":	
