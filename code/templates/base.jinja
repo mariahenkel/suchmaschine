@@ -7,8 +7,11 @@
     <title>{% block title %}My Flask App{% endblock %}</title>
     <!-- Bootstrap -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/customsnormal.css') }}" rel="stylesheet">
     {%if sugly %}
-    <link href="{{ url_for('static', filename='css/geobootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/customsugly.css') }}" rel="stylesheet">
+<!--    <link href="{{ url_for('static', filename='css/geobootstrap.min.css') }}" rel="stylesheet"> -->
     {% endif %}
     <link href="static/animated_favicon.gif" rel="icon" type="image/x-icon">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -41,10 +44,8 @@
 <footer class="footer">
     <div class="container">
         <div class="row">
-            <div class="col-md-3 col-md-offset-4">
             <br>
-            © smonky 2015 <a href="{{ url_for('impressum') }}">Impressum</a>
-            </div>
+            © smonky 2015 &nbsp; <a href="{{ url_for('impressum') }}">Impressum</a>
         </div>
 </footer>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

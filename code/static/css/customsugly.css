@@ -1,0 +1,30 @@
+body {
+    background-color: #fdff7b;
+    color: #ff6ec0;
+    
+}
+
+footer{
+    position: fixed;
+    bottom: 0px;
+    width: 100%;
+    height: 60px;
+    background-color: #e0b395;
+    color: #ffffff;
+    text-align: center
+}
+
+
+.panel-warning > .panel-heading {
+    background-color: #ffc4e5;
+    color: #777777
+
+}
+
+
+.panel-warning > .panel-body {
+  background-color: #feffcd
+  
+
+  
+}
