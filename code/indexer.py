@@ -149,17 +149,13 @@ if __name__ == "__main__":
 
     # calculate idf
     N = session.query(Document).count()
-    dictidf = {}
-    words = session.query(ConsistsOf.wordlist_wordid).yield_per(100)
-
-    for element in words:
-        if element not in dictidf.keys():
-            dictidf[element] = 1
-        else:
-            dictidf[element] += 1
-    print dictidf
-
-    # for values in dictidf.values():
-    #   IDF = float(log(N/values))+1/log(2)
-    # print IDF
-# wordtable.update().execute(idf=IDF)
+    wordsfiltered =session.query(ConsistsOf, Wordlist).filter(ConsistsOf.wordlist_wordid == Wordlist.id).first()
+    if wordsfiltered:
+        account = Wordlist()
+        frequencywordid=session.query(ConsistsOf.wordlist_wordid)
+        for element in frequencywordid:
+            n=frequencywordid.count(element)
+            IDF = float(log(N/n))+1/log(2)
+            account.idf = IDF 
+            session.add(account)
+            session.commit()
