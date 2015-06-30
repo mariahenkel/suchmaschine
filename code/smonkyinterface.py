@@ -68,7 +68,6 @@ def select(searchquerynew):
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents:
             a, b = document
-            b = 5
             if a in all_documents.keys():
                 all_documents[a] = all_documents[a] + b
             else:
@@ -85,7 +84,6 @@ def sugly(searchquerynew):
         read_documents_ugly = session.query(Document, Document.overall_score, Wordlist.idf*ConsistsOf.wdf).outerjoin(ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents_ugly:
             a,b,c = document
-            b = 5
             if a in all_documents.keys():
                 all_documents[a] = all_documents[a] + (b*5+c)
             else:
