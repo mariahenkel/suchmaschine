@@ -64,7 +64,7 @@ def process_query(searchqueryreplaced):
 def select(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
-        read_documents = session.query(Document, Wordlist.idf * ConsistsOf.wdf).outerjoin(
+        read_documents = session_.query(Document, Wordlist.idf * ConsistsOf.wdf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents:
             a, b = document
@@ -75,26 +75,28 @@ def select(searchquerynew):
         sorted_all_documents = sorted(
             all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
-    
 
 
 def sugly(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
-        read_documents_ugly = session.query(Document, Document.overall_score, Wordlist.idf*ConsistsOf.wdf).outerjoin(ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
+        read_documents_ugly = session_.query(Document, Document.overall_score, Wordlist.idf * ConsistsOf.wdf).outerjoin(
+            ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents_ugly:
-            a,b,c = document
-            if a in all_documents.keys():
-                all_documents[a] = all_documents[a] + (b*5+c)
-            else:
-                all_documents[a] = b*5+c
-    sorted_all_documents = sorted(all_documents.iteritems(), key=operator.itemgetter(1), reverse = True)
+            a, b, c = document
+            if b:
+                if a in all_documents.keys():
+                    all_documents[a] = all_documents[a] + (b * 5 + c)
+                else:
+                    all_documents[a] = b * 5 + c
+    sorted_all_documents = sorted(
+        all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
 
 
 #@app.teardown_appcontext
 # def shutdown_session(exception=None):
-#    db_session.remove()
+#    db_session_.remove()
 
 # Index-Seite.
 # Stellt die Startseite dar, hier sollte aber auch direkt die Eingabe in das Suchfeld weiterverarbeitet werden, damit dann, je nach gewählter Suche,
@@ -105,9 +107,11 @@ def index():
     form = SearchQuery()
     return render_template('index.jinja', form=form)
 
+
 @app.route('/impressum')
 def impressum():
     return render_template('impressum.jinja')
+
 
 @app.route('/normal', methods=["GET", "POST"])
 def normalsearch():
@@ -140,7 +144,6 @@ def suglysearch():
         return redirect('/')
 
 
-
 @app.route('/info')
 def info():
     return render_template('info.jinja')
@@ -149,5 +152,5 @@ def info():
 if __name__ == "__main__":
     some_engine = create_engine(DB_URI, echo=DEBUG)  # xxx
     Session = sessionmaker(bind=some_engine)  # xxx
-    session = Session()
+    session_ = Session()
     app.run(debug=True)
