@@ -145,7 +145,6 @@ def suglysearch():
         searchquerynew = process_query(searchqueryreplaced)
         # TODO: make sugly search here
         results = sugly(searchquerynew)
-        print results
         return render_template('index.jinja', form=form,
                                results=results, sugly=True)
     else:
