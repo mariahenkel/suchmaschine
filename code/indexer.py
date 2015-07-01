@@ -2,9 +2,6 @@
 
 import sys
 
-# Die folgende Zeile führt unter Linux zu einer Fehlermeldung. Bitte ggf. (ent)kommentieren.
-#from BeautifulSoup import BeautifulSoup
-
 from nltk.corpus import stopwords   # stopwords to detect language
 from nltk import wordpunct_tokenize  # function to split up our words
 from nltk.stem import PorterStemmer  # Import Stemmer
@@ -19,7 +16,7 @@ from sqlalchemy import MetaData, Table
 import config
 from math import log
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from config import DB_URI, DEBUG
 from models import Wordlist, Document, ConsistsOf
 
@@ -43,8 +40,9 @@ Base = declarative_base()
 
 
 some_engine = create_engine(DB_URI, echo=DEBUG)
-Session = sessionmaker(bind=some_engine)
-session = Session()
+session_factory = sessionmaker(bind=some_engine)
+session = scoped_session(session_factory)
+second_session = scoped_session(session_factory)
 
 
 def get_language_likelihood(website):
@@ -73,7 +71,7 @@ def get_language(input_text):
     return sorted(likelihoods, key=likelihoods.get, reverse=True)[0]
 
 
-def indexer(document):
+def index_document(document):
     if get_language(document.html_document) == "english":
         soup = BeautifulSoup(document.html_document)
         # remove javascript
@@ -116,7 +114,6 @@ def indexer(document):
 
             # check if the relation for this word and document already
             # exists
-            print document.id, word.id
             existing_consist_of = session.query(ConsistsOf).filter(
                 ConsistsOf.document_documentid == document.id).filter(
                 ConsistsOf.wordlist_wordid == word.id).first()
@@ -138,24 +135,29 @@ def indexer(document):
                 session.commit()
 
 
+def calculate_idf():
+    # https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
+    big_n = session.query(Document).count()
+    for word in session.query(Wordlist).yield_per(100):
+        small_n = len(word.document_assocs)
+        # use a second session because of yield_per
+        # see (http://stackoverflow.com/q/12233115/2175370)
+        writeable_word = second_session.query(Wordlist).filter(
+            Wordlist.id == word.id).first()
+        # adjust the small_n (+1) to avoid division-by-zero
+        writeable_word.idf = float(log(big_n / (small_n + 1)))
+
+        second_session.add(writeable_word)
+        second_session.commit()
+
 if __name__ == "__main__":
     # get all documents from the db
+    print "#### indexing all words from all documents"
     html_document = session.query(
         Document).yield_per(100)
-
     # index all of them
     for element in html_document:
-        indexer(element)
-
+        index_document(element)
+    print "#### calculating IDF for all words"
     # calculate idf
-    N = session.query(Document).count()
-    wordsfiltered =session.query(ConsistsOf, Wordlist).filter(ConsistsOf.wordlist_wordid == Wordlist.id).first()
-    if wordsfiltered:
-        account = Wordlist()
-        frequencywordid=session.query(ConsistsOf.wordlist_wordid)
-        for element in frequencywordid:
-            n=frequencywordid.count(element)
-            IDF = float(log(N/n))+1/log(2)
-            account.idf = IDF 
-            session.add(account)
-            session.commit()
+    calculate_idf()
