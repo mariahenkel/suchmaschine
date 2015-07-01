@@ -99,40 +99,41 @@ def index_document(document):
         length_website = len(word_list)
 
         for element in word_list:
-            word_count = word_list.count(element)
-            word = session.query(Wordlist).filter(
-                Wordlist.word == element).first()
-            if not word:
-                # create a new word
-                word_pos = word_pos + 1
-                word = Wordlist()
-                word.word = element
-                word.stem = stemmer.stem(element)
-                word.stopword = element in stop
-                session.add(word)
-                session.commit()
+            if len(element) <= 50:
+                word_count = word_list.count(element)
+                word = session.query(Wordlist).filter(
+                    Wordlist.word == element).first()
+                if not word:
+                    # create a new word
+                    word_pos = word_pos + 1
+                    word = Wordlist()
+                    word.word = element
+                    word.stem = stemmer.stem(element)
+                    word.stopword = element in stop
+                    session.add(word)
+                    session.commit()
 
-            # check if the relation for this word and document already
-            # exists
-            existing_consist_of = session.query(ConsistsOf).filter(
-                ConsistsOf.document_documentid == document.id).filter(
-                ConsistsOf.wordlist_wordid == word.id).first()
+                # check if the relation for this word and document already
+                # exists
+                existing_consist_of = session.query(ConsistsOf).filter(
+                    ConsistsOf.document_documentid == document.id).filter(
+                    ConsistsOf.wordlist_wordid == word.id).first()
 
-            if not existing_consist_of:
-                # calculate wdf
-                wdf_word = log(word_count) / log(2) + 1 / \
-                    log(length_website) / log(2)
+                if not existing_consist_of:
+                    # calculate wdf
+                    wdf_word = log(word_count) / log(2) + 1 / \
+                        log(length_website) / log(2)
 
-                # create relationship between word and document
-                consists_of = ConsistsOf()
-                consists_of.document_documentid = document.id
-                consists_of.wordlist_wordid = word.id
-                consists_of.wdf = wdf_word
-                consists_of.stopword = 0
-                consists_of.sentenceno = 0
-                consists_of.position = word_pos
-                session.add(consists_of)
-                session.commit()
+                    # create relationship between word and document
+                    consists_of = ConsistsOf()
+                    consists_of.document_documentid = document.id
+                    consists_of.wordlist_wordid = word.id
+                    consists_of.wdf = wdf_word
+                    consists_of.stopword = 0
+                    consists_of.sentenceno = 0
+                    consists_of.position = word_pos
+                    session.add(consists_of)
+                    session.commit()
 
 
 def calculate_idf():
