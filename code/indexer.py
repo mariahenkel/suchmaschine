@@ -78,62 +78,63 @@ def index_document(document):
         for s in soup('script'):
             s.extract()
         # remove all comments
-        for child in soup.body:
-            if isinstance(child, Comment):
-                child.extract()
+        if soup.body:
+            for child in soup.body:
+                if isinstance(child, Comment):
+                    child.extract()
 
-        body_text = soup.body.getText()
+            body_text = soup.body.getText()
 
-        char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '', '.': '', '...': '', '\n': ' ', '/': '',
-                     '+': '', '<': '', '>': '', '}': '', '{': '', '=': '', ']': '', '[': '', ')': '', '(': '', '|': ''}
-        for i, j in char_dict.iteritems():
-            body_text = body_text.replace(i, j)
-        word_list = body_text.lower().split()
+            char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '', '.': '', '...': '', '\n': ' ', '/': '',
+                         '+': '', '<': '', '>': '', '}': '', '{': '', '=': '', ']': '', '[': '', ')': '', '(': '', '|': ''}
+            for i, j in char_dict.iteritems():
+                body_text = body_text.replace(i, j)
+            word_list = body_text.lower().split()
 
-        # save every word plus stem, count, etc. in the database/dictionary
-        # Use english stopword list from nltk corpus
-        stop = stopwords.words('english')
+            # save every word plus stem, count, etc. in the database/dictionary
+            # Use english stopword list from nltk corpus
+            stop = stopwords.words('english')
 
-        word_pos = 0  # Counter for word position
-        stemmer = PorterStemmer()
-        length_website = len(word_list)
+            word_pos = 0  # Counter for word position
+            stemmer = PorterStemmer()
+            length_website = len(word_list)
 
-        for element in word_list:
-            if len(element) <= 50:
-                word_count = word_list.count(element)
-                word = session.query(Wordlist).filter(
-                    Wordlist.word == element).first()
-                if not word:
-                    # create a new word
-                    word_pos = word_pos + 1
-                    word = Wordlist()
-                    word.word = element
-                    word.stem = stemmer.stem(element)
-                    word.stopword = element in stop
-                    session.add(word)
-                    session.commit()
+            for element in word_list:
+                if len(element) <= 50:
+                    word_count = word_list.count(element)
+                    word = session.query(Wordlist).filter(
+                        Wordlist.word == element).first()
+                    if not word:
+                        # create a new word
+                        word_pos = word_pos + 1
+                        word = Wordlist()
+                        word.word = element
+                        word.stem = stemmer.stem(element)
+                        word.stopword = element in stop
+                        session.add(word)
+                        session.commit()
 
-                # check if the relation for this word and document already
-                # exists
-                existing_consist_of = session.query(ConsistsOf).filter(
-                    ConsistsOf.document_documentid == document.id).filter(
-                    ConsistsOf.wordlist_wordid == word.id).first()
+                    # check if the relation for this word and document already
+                    # exists
+                    existing_consist_of = session.query(ConsistsOf).filter(
+                        ConsistsOf.document_documentid == document.id).filter(
+                        ConsistsOf.wordlist_wordid == word.id).first()
 
-                if not existing_consist_of:
-                    # calculate wdf
-                    wdf_word = log(word_count) / log(2) + 1 / \
-                        log(length_website) / log(2)
+                    if not existing_consist_of:
+                        # calculate wdf
+                        wdf_word = log(word_count) / log(2) + 1 / \
+                            log(length_website) / log(2)
 
-                    # create relationship between word and document
-                    consists_of = ConsistsOf()
-                    consists_of.document_documentid = document.id
-                    consists_of.wordlist_wordid = word.id
-                    consists_of.wdf = wdf_word
-                    consists_of.stopword = 0
-                    consists_of.sentenceno = 0
-                    consists_of.position = word_pos
-                    session.add(consists_of)
-                    session.commit()
+                        # create relationship between word and document
+                        consists_of = ConsistsOf()
+                        consists_of.document_documentid = document.id
+                        consists_of.wordlist_wordid = word.id
+                        consists_of.wdf = wdf_word
+                        consists_of.stopword = 0
+                        consists_of.sentenceno = 0
+                        consists_of.position = word_pos
+                        session.add(consists_of)
+                        session.commit()
 
 
 def calculate_idf():
