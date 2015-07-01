@@ -23,6 +23,11 @@ app = Flask(__name__)
 app.debug = True
 app.config.from_object(config)
 
+# sqlalchemy session
+some_engine = create_engine(DB_URI, echo=DEBUG)  # xxx
+Session = sessionmaker(bind=some_engine)  # xxx
+session = Session()
+
 
 # Ersetzen von Satzzeichen xxx
 def replace_char(searchquery):
@@ -64,7 +69,7 @@ def process_query(searchqueryreplaced):
 def select(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
-        read_documents = session_.query(Document, Wordlist.idf * ConsistsOf.wdf).outerjoin(
+        read_documents = session.query(Document, Wordlist.idf * ConsistsOf.wdf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents:
             a, b = document
@@ -80,7 +85,7 @@ def select(searchquerynew):
 def sugly(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
-        read_documents_ugly = session_.query(Document, Document.overall_score, Wordlist.idf * ConsistsOf.wdf).outerjoin(
+        read_documents_ugly = session.query(Document, Document.overall_score, Wordlist.idf * ConsistsOf.wdf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents_ugly:
             a, b, c = document
@@ -96,7 +101,7 @@ def sugly(searchquerynew):
 
 #@app.teardown_appcontext
 # def shutdown_session(exception=None):
-#    db_session_.remove()
+#    db_session.remove()
 
 # Index-Seite.
 # Stellt die Startseite dar, hier sollte aber auch direkt die Eingabe in das Suchfeld weiterverarbeitet werden, damit dann, je nach gewählter Suche,
@@ -150,7 +155,4 @@ def info():
 
 
 if __name__ == "__main__":
-    some_engine = create_engine(DB_URI, echo=DEBUG)  # xxx
-    Session = sessionmaker(bind=some_engine)  # xxx
-    session_ = Session()
     app.run(debug=True)
