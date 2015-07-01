@@ -73,11 +73,11 @@ def select(searchquerynew):
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents:
             a, b = document
-            if a and b:
-                if a in all_documents.keys():
-                    all_documents[a] = all_documents[a] + b
-                else:
-                    all_documents[a] = b
+            b = 0 if not b else b
+            if a in all_documents.keys():
+                all_documents[a] = all_documents[a] + b
+            else:
+                all_documents[a] = b
         sorted_all_documents = sorted(
             all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
@@ -90,11 +90,13 @@ def sugly(searchquerynew):
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents_ugly:
             a, b, c = document
-            if a and b and c:
-                if a in all_documents.keys():
-                    all_documents[a] = all_documents[a] + (b * 5 + c)
-                else:
-                    all_documents[a] = b * 5 + c
+            # TODO: Variablen sinnvoll benennen und Queries optimieren
+            b = 0 if not b else b
+            c = 0 if not c else c
+            if a in all_documents.keys():
+                all_documents[a] = all_documents[a] + (b * 5 + c)
+            else:
+                all_documents[a] = b * 5 + c
     sorted_all_documents = sorted(
         all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
