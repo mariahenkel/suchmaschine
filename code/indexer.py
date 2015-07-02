@@ -100,7 +100,7 @@ def index_document(document):
             length_website = len(word_list)
 
             for element in word_list:
-                if len(element) <= 50:
+                if len(element) <= 50 and length_website>1:
                     word_count = word_list.count(element)
                     word = session.query(Wordlist).filter(
                         Wordlist.word == element).first()
@@ -122,8 +122,7 @@ def index_document(document):
 
                     if not existing_consist_of:
                         # calculate wdf
-                        wdf_word = log(word_count) / log(2) + 1 / \
-                            log(length_website) / log(2)
+                        wdf_word = log(word_count+1)/log(length_website)
 
                         # create relationship between word and document
                         consists_of = ConsistsOf()
