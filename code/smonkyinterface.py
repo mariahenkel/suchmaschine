@@ -72,12 +72,12 @@ def select(searchquerynew):
         read_documents = session.query(Document, Wordlist.idf * ConsistsOf.wdf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents:
-            a, b = document
-            b = 0 if not b else b
+            a, wdf_idf = document
+            wdf_idf = 0 if not wdf_idf else wdf_idf
             if a in all_documents.keys():
-                all_documents[a] = all_documents[a] + b
+                all_documents[a] = all_documents[a] + wdf_idf
             else:
-                all_documents[a] = b
+                all_documents[a] = wdf_idf
         sorted_all_documents = sorted(
             all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
@@ -89,14 +89,14 @@ def sugly(searchquerynew):
         read_documents_ugly = session.query(Document, Document.overall_score, Wordlist.idf * ConsistsOf.wdf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
         for document in read_documents_ugly:
-            a, b, c = document
+            a, Uscore, wdf_idf = document
             # TODO: Variablen sinnvoll benennen und Queries optimieren
-            b = 0 if not b else b
-            c = 0 if not c else c
+            Uscore = 0 if not Uscore else Uscore
+            wdf_idf = 0 if not wdf_idf else wdf_idf
             if a in all_documents.keys():
-                all_documents[a] = all_documents[a] + (b * 5 + c)
+                all_documents[a] = all_documents[a] + (Uscore * 0.2 + wdf_idf)
             else:
-                all_documents[a] = b * 5 + c
+                all_documents[a] = Uscore * 0.2 + wdf_idf
     sorted_all_documents = sorted(
         all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
@@ -124,6 +124,7 @@ def impressum():
 @app.route('/normal', methods=["GET", "POST"])
 def normalsearch():
     form = SearchQuery()
+#    results = []
     if form.validate_on_submit():
         searchquery = form.queryfield.data.encode('utf-8').split()
         searchqueryreplaced = replace_char(searchquery)
@@ -131,10 +132,9 @@ def normalsearch():
         results = select(searchquerynew)
         # print documents_with_terms
         return render_template('index.jinja', form=form,
-                               results=results, sugly=False)
+                               results=results, sugly=False)        
     else:
         return redirect('/')
-
 
 @app.route('/sugly', methods=["GET", "POST"])
 def suglysearch():
