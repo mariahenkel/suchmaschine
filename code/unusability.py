@@ -232,8 +232,8 @@ def threads_images(soup, url):
         thread.join()
     while not queue.empty():
         amount_distorted_images += queue.get()
-    distorted_images = True if len(img_tags) != 0 and float(
-        amount_distorted_images) / len(img_tags) > 0.05 else False
+    distorted_images = 1 if len(img_tags) != 0 and float(
+        amount_distorted_images) / len(img_tags) > 0.05 else 0
     return distorted_images
 
 
