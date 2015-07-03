@@ -58,6 +58,9 @@
 			</div>
 				<div class="panel-body">
 					<a href="{{ result.url | safe }}">{{ result.url | safe }}</a>
+                    {% if debug %}
+                    <p>IDF: {{result.idf}} | WDF : {{result.wdf}} | UR: {{result.ur}}</p>
+                    {% endif %}
 				</div>
 			</div>
         {% endfor %}

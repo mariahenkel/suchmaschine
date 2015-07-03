@@ -1,19 +1,14 @@
 #!/usr/bin/env python
 # coding: utf8
 
-from flask import Flask, render_template, url_for, redirect, flash, request, session
+from flask import Flask, render_template, redirect
 import config
-from sqlalchemy import asc
 from forms import SearchQuery
-from werkzeug import secure_filename
-from flask.ext.bootstrap import Bootstrap
-import os
-#from database import db_session
+
 from nltk.corpus import stopwords  # Stoppwortliste xxx
 from nltk.stem import PorterStemmer  # Stemmer xxx
 from models import *  # xxx
 from sqlalchemy import create_engine  # xxx
-from sqlalchemy.ext.declarative import declarative_base  # xxx
 from sqlalchemy.orm import sessionmaker  # xxx
 from config import DB_URI, DEBUG  # xxx
 import operator  # xxx
@@ -32,8 +27,10 @@ session = Session()
 # Ersetzen von Satzzeichen xxx
 def replace_char(searchquery):
     replacedquery = []
-    char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '', '.': '', '...': '', '\n': ' ', '/': '', '+':
-                 '', '<': '', '>': '', '}': '', '{': '', '=': '', ']': '', '[': '', ')': '', '(': '', '|': '', ',': ''}
+    char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '', '.': '',
+                 '...': '', '\n': ' ', '/': '', '+': '', '<': '', '>': '',
+                 '}': '', '{': '', '=': '', ']': '', '[': '', ')': '',
+                 '(': '', '|': '', ',': ''}
     for element in searchquery:
         for i, j in char_dict.iteritems():
             for letter in element:
@@ -59,8 +56,8 @@ def process_query(searchqueryreplaced):
                 continue
             else:
                 newquery.append(word_stem)
-        except:
-            pass
+        except Exception as e:
+            print e
     return newquery
 
 # xxx
@@ -69,15 +66,23 @@ def process_query(searchqueryreplaced):
 def select(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
-        read_documents = session.query(Document, Wordlist.idf * ConsistsOf.wdf).outerjoin(
+        results = session.query(Document, Wordlist, ConsistsOf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
-        for document in read_documents:
-            a, wdf_idf = document
-            wdf_idf = 0 if not wdf_idf else wdf_idf
-            if a in all_documents.keys():
-                all_documents[a] = all_documents[a] + wdf_idf
+        for result in results:
+            website = result[0]
+            word = result[1]
+            relation = result[2]
+            wdf = relation.wdf
+            idf = word.idf
+            website.wdf = wdf
+            website.idf = idf
+            wdf = 0 if not wdf else wdf
+            idf = 0 if not idf else idf
+            wdf_idf = wdf * idf
+            if website in all_documents.keys():
+                all_documents[website] = all_documents[website] + wdf_idf
             else:
-                all_documents[a] = wdf_idf
+                all_documents[website] = wdf_idf
         sorted_all_documents = sorted(
             all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
@@ -86,17 +91,27 @@ def select(searchquerynew):
 def sugly(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
-        read_documents_ugly = session.query(Document, Document.overall_score, Wordlist.idf * ConsistsOf.wdf).outerjoin(
+        results = session.query(Document, Wordlist, ConsistsOf).outerjoin(
             ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
-        for document in read_documents_ugly:
-            a, Uscore, wdf_idf = document
-            # TODO: Variablen sinnvoll benennen und Queries optimieren
+        for result in results:
+            website = result[0]
+            word = result[1]
+            relation = result[2]
+            wdf = relation.wdf
+            idf = word.idf
+            website.wdf = wdf
+            website.idf = idf
+            website.ur = website.overall_score
+            wdf = 0 if not wdf else wdf
+            idf = 0 if not idf else idf
+            wdf_idf = wdf * idf
+            Uscore = website.overall_score
             Uscore = 0 if not Uscore else Uscore
-            wdf_idf = 0 if not wdf_idf else wdf_idf
-            if a in all_documents.keys():
-                all_documents[a] = all_documents[a] + (Uscore * 0.2 + wdf_idf)
+            if website in all_documents.keys():
+                all_documents[website] = all_documents[
+                    website] + (Uscore * 2 + wdf_idf)
             else:
-                all_documents[a] = Uscore * 0.2 + wdf_idf
+                all_documents[website] = Uscore * 0.2 + wdf_idf
     sorted_all_documents = sorted(
         all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
@@ -130,11 +145,11 @@ def normalsearch():
         searchqueryreplaced = replace_char(searchquery)
         searchquerynew = process_query(searchqueryreplaced)
         results = select(searchquerynew)
-        # print documents_with_terms
         return render_template('index.jinja', form=form,
-                               results=results, sugly=False)        
+                               results=results, sugly=False, debug=DEBUG)
     else:
         return redirect('/')
+
 
 @app.route('/sugly', methods=["GET", "POST"])
 def suglysearch():
@@ -143,10 +158,9 @@ def suglysearch():
         searchquery = form.queryfield.data.encode('utf-8').split()
         searchqueryreplaced = replace_char(searchquery)
         searchquerynew = process_query(searchqueryreplaced)
-        # TODO: make sugly search here
         results = sugly(searchquerynew)
         return render_template('index.jinja', form=form,
-                               results=results, sugly=True)
+                               results=results, sugly=True, debug=DEBUG)
     else:
         return redirect('/')
 
