@@ -1,46 +1,26 @@
 # -*- coding: utf-8 -*-
 
-import sys
+from math import log
 
 from nltk.corpus import stopwords   # stopwords to detect language
 from nltk import wordpunct_tokenize  # function to split up our words
 from nltk.stem import PorterStemmer  # Import Stemmer
-
 from bs4 import BeautifulSoup, Comment  # Import BeautifulSoup und Comment
-
-
 # SQLAlchemy imports
-
 from sqlalchemy import create_engine
-from sqlalchemy import MetaData, Table
-import config
-from math import log
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, scoped_session
+
 from config import DB_URI, DEBUG
 from models import Wordlist, Document, ConsistsOf
 
-# Encoding for the file
-reload(sys)
-sys.setdefaultencoding("utf-8")
 
-# Establish connection, load all necessary tables
-engine = create_engine(config.DB_URI, echo=False)
-metadata = MetaData(bind=engine)
-wordtable = Table("wordlist", metadata, autoload=True)
-webpage = Table("document", metadata, autoload=True)
-relation = Table("consists_of", metadata, autoload=True)
-
-Base = declarative_base()
-
-
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # From here on: Stemming / Stopword Recognition / Saving into Database
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 
-some_engine = create_engine(DB_URI, echo=DEBUG)
-session_factory = sessionmaker(bind=some_engine)
+engine = create_engine(DB_URI, echo=DEBUG)
+session_factory = sessionmaker(bind=engine)
 session = scoped_session(session_factory)
 second_session = scoped_session(session_factory)
 
@@ -85,8 +65,10 @@ def index_document(document):
 
             body_text = soup.body.getText()
 
-            char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '', '.': '', '...': '', '\n': ' ', '/': '',
-                         '+': '', '<': '', '>': '', '}': '', '{': '', '=': '', ']': '', '[': '', ')': '', '(': '', '|': ''}
+            char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '',
+                         '.': '', '...': '', '\n': ' ', '/': '',
+                         '+': '', '<': '', '>': '', '}': '', '{': '', '=': '',
+                         ']': '', '[': '', ')': '', '(': '', '|': ''}
             for i, j in char_dict.iteritems():
                 body_text = body_text.replace(i, j)
             word_list = body_text.lower().split()
@@ -116,7 +98,8 @@ def index_document(document):
 
                     # check if the relation for this word and document already
                     # exists
-                    existing_consist_of = second_session.query(ConsistsOf).filter(
+                    existing_consist_of = second_session.query(ConsistsOf).\
+                        filter(
                         ConsistsOf.document_documentid == document.id).filter(
                         ConsistsOf.wordlist_wordid == word.id).first()
 
