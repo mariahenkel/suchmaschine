@@ -18,6 +18,10 @@ from threading import Thread
 Base = declarative_base()
 queue = Queue.Queue()
 
+some_engine = create_engine(DB_URI, echo=DEBUG)
+Session = sessionmaker(bind=some_engine)
+session = Session()
+
 
 def get_tags(soup):
     tag_attrs_lists = []
@@ -192,23 +196,23 @@ def get_distorted_images(url, soup, img_tags):
         if "width" in str(img_tags) and "height" in str(img_tags):
             try:
                 im = Image.open(urllib2.urlopen(url + tag.get("src")))
-            except IOError:
-                pass
-            except TypeError:
-                pass
-            except urllib2.HTTPError:
-                pass
+            except IOError as e:
+                print e
+            except TypeError as e:
+                print e
+            except urllib2.HTTPError as e:
+                print e
             # hier kommt ab und zu InvalidURL, aber der nimmt den
             # ExceptionType nicht an..
-            except:
-                pass
+            except Exception as e:
+                print e
             else:
                 try:
                     if round(float(im.size[0]) / im.size[1], 2) != round(float(tag.get("width")) / float(tag.get("height")), 2):
                         distorted_image = 1
                         queue.put(distorted_image)
-                except ZeroDivisionError:
-                    pass
+                except ZeroDivisionError as e:
+                    print e
 
 
 def threads_images(soup, url):
@@ -299,14 +303,6 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     return score
 
 
-some_engine = create_engine(DB_URI, echo=DEBUG)
-Session = sessionmaker(bind=some_engine)
-session = Session()
-websites = session.query(
-    Document.html_document, Document.url, Document.overall_score).yield_per(100)
-num_of_websites = session.query(Document).count()
-
-
 def overall(websites, website_dict):
     for site in websites:
         if site[2] != None:
@@ -356,7 +352,7 @@ def overall(websites, website_dict):
             websites_data.append(website_dict)
 
 
-def get_unusability(websites):
+def get_unusability(websites, num_of_websites):
     thread_list = []
     threads = 99
     beg = 0
@@ -376,16 +372,25 @@ def get_unusability(websites):
         thread.join()
     return websites_data
 
+print "getting all websites"
+websites = session.query(
+    Document.html_document, Document.url, Document.overall_score)\
+    .filter(~Document.title.contains('LinkedIn'))\
+    .order_by((Document.id.desc())).yield_per(100)
+num_of_websites = session.query(Document).count()
+
+print "start ranking {} websites".format(num_of_websites)
 websites_data = []
 
-beg, end = -50, 0
+beg, end = -10, 0
 while end < num_of_websites:
-    beg += 50
-    end += 50
+    beg += 10
+    end += 10
     if end > num_of_websites:
         end = num_of_websites
-    websites_data = get_unusability(websites[beg:end])
+    websites_data = get_unusability(websites[beg:end], num_of_websites)
     for website in websites_data:
+        print "processing website no. end"
         for x in website.items():
             update = session.query(Document).filter(Document.url == website.items()[
                 5][1]).update({k: v for k, v in website.items()})
