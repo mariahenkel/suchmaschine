@@ -111,7 +111,7 @@ def sugly(searchquerynew):
                 all_documents[website] = all_documents[
                     website] + (Uscore * 2 + wdf_idf)
             else:
-                all_documents[website] = Uscore * 0.2 + wdf_idf
+                all_documents[website] = Uscore * 2 + wdf_idf
     sorted_all_documents = sorted(
         all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
     return [elem[0] for elem in sorted_all_documents]
