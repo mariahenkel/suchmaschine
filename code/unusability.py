@@ -379,7 +379,7 @@ websites = session.query(
     .order_by((Document.id.desc())).yield_per(100)
 num_of_websites = session.query(Document).count()
 
-print "start ranking {} websites".format(num_of_websites)
+print "start ranking {0} websites".format(num_of_websites)
 websites_data = []
 
 beg, end = -10, 0
@@ -390,7 +390,7 @@ while end < num_of_websites:
         end = num_of_websites
     websites_data = get_unusability(websites[beg:end], num_of_websites)
     for website in websites_data:
-        print "processing website no. end"
+        print "processing website no. {0}".format(end)
         for x in website.items():
             update = session.query(Document).filter(Document.url == website.items()[
                 5][1]).update({k: v for k, v in website.items()})
