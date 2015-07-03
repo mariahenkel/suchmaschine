@@ -121,11 +121,13 @@ def index_document(document):
 
 def calculate_idf():
     # https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
-    big_n = session.query(Document).count()
+    # get number of indexed Documents
+    big_n = session.query(ConsistsOf).group_by(
+        ConsistsOf.document_documentid).count()
     for word in session.query(Wordlist).yield_per(100):
         small_n = len(word.document_assocs)
         # use a second session because of yield_per
-        # see (http://stackoverflow.com/q/12233115/2175370)
+        # (see http://stackoverflow.com/q/12233115/2175370)
         writeable_word = second_session.query(Wordlist).filter(
             Wordlist.id == word.id).first()
         # adjust the small_n (+1) to avoid division-by-zero
