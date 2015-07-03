@@ -7,11 +7,11 @@ from nltk import wordpunct_tokenize  # function to split up our words
 from nltk.stem import PorterStemmer  # Import Stemmer
 from bs4 import BeautifulSoup, Comment  # Import BeautifulSoup und Comment
 # SQLAlchemy imports
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, func, distinct
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from config import DB_URI, DEBUG
-from models import Wordlist, Document, ConsistsOf
+from models import Wordlist, ConsistsOf
 
 
 # ----------------------------------------------------------------------
@@ -122,8 +122,8 @@ def index_document(document):
 def calculate_idf():
     # https://en.wikipedia.org/wiki/Tf%E2%80%93idf#Inverse_document_frequency_2
     # get number of indexed Documents
-    big_n = session.query(ConsistsOf).group_by(
-        ConsistsOf.document_documentid).count()
+    big_n = session.query(
+        func.count(distinct(ConsistsOf.document_documentid))).first()[0]
     for word in session.query(Wordlist).yield_per(100):
         small_n = len(word.document_assocs)
         # use a second session because of yield_per
