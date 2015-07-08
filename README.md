@@ -1,6 +1,7 @@
 # suchmaschine
 Wir programmieren eine "Unusability"-Suchmaschine. :)
 
+[![Codacy Badge](https://www.codacy.com/project/badge/75db2869b79b40f59765dea773691ac4)](https://www.codacy.com/app/Maurice-Schleussinger/suchmaschine)
 
 General Usage
 -------------
