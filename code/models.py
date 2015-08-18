@@ -22,7 +22,6 @@ class Document(Base):
     title = Column(Text)
     ranking = Column(Float)
     html_document = Column(Text)
-    thumbnail = Column(LargeBinary)
     number_of_gifs = Column(Integer)
     backgroundmusic = Column(Boolean)
     musicloop = Column(Boolean)
