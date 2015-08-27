@@ -242,18 +242,12 @@ def threads_images(soup, url):
 
 
 def get_w3c(url):
-    w3c_link = "https://validator.w3.org/check?uri="
+    w3c_link = "https://validator.w3.org/nu/?doc="
     check_url = urllib2.urlopen(w3c_link + url)
     if str(check_url.getcode()).startswith("2") or str(check_url.getcode()).startswith("3"):
         content = check_url.read()
-        soup = BeautifulSoup(content)
-        errors = soup.find("h3", class_="invalid")
-        if errors is not None:
-            errors_extracted = re.findall(r'\d+', str(errors.get_text()))
-            errors_extracted = [int(x) for x in errors_extracted]
-        else:
-            errors_extracted = [0]
-        return errors_extracted[0]
+        errors = content.count('<li class="error">')
+        return errors
     else:
         pass
 
