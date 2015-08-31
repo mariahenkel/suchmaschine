@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from math import log
+from math import log # log for idf and wdf calculation
 
 from nltk.corpus import stopwords   # stopwords to detect language
 from nltk import wordpunct_tokenize  # function to split up our words
