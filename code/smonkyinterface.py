@@ -1,17 +1,18 @@
 #!/usr/bin/env python
-# coding: utf8
+# -*- coding: utf-8 -*-
+import operator  # xxx
 
 from flask import Flask, render_template, redirect
-import config
 from forms import SearchQuery
+# meaning of xxx?
 
 from nltk.corpus import stopwords  # Stoppwortliste xxx
 from nltk.stem import PorterStemmer  # Stemmer xxx
-from models import *  # xxx
+from models import Document, ConsistsOf, Wordlist
 from sqlalchemy import create_engine  # xxx
 from sqlalchemy.orm import sessionmaker  # xxx
-from config import DB_URI, DEBUG  # xxx
-import operator  # xxx
+
+import config
 
 
 app = Flask(__name__)
@@ -19,7 +20,7 @@ app.debug = True
 app.config.from_object(config)
 
 # sqlalchemy session
-some_engine = create_engine(DB_URI, echo=DEBUG)  # xxx
+some_engine = create_engine(config.DB_URI, echo=config.DEBUG)  # xxx
 Session = sessionmaker(bind=some_engine)  # xxx
 session = Session()
 
@@ -67,7 +68,8 @@ def select(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
         results = session.query(Document, Wordlist, ConsistsOf).outerjoin(
-            ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
+            ConsistsOf).outerjoin(Wordlist)\
+            .filter(Wordlist.word == element).all()
         for result in results:
             website = result[0]
             word = result[1]
@@ -84,7 +86,9 @@ def select(searchquerynew):
             else:
                 all_documents[website] = wdf_idf
         sorted_all_documents = sorted(
-            all_documents.iteritems(), key=operator.itemgetter(1), reverse=True)
+            all_documents.iteritems(),
+            key=operator.itemgetter(1),
+            reverse=True)
     return [elem[0] for elem in sorted_all_documents]
 
 
@@ -92,7 +96,8 @@ def sugly(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
         results = session.query(Document, Wordlist, ConsistsOf).outerjoin(
-            ConsistsOf).outerjoin(Wordlist).filter(Wordlist.word == element).all()
+            ConsistsOf).outerjoin(Wordlist)\
+            .filter(Wordlist.word == element).all()
         for result in results:
             website = result[0]
             word = result[1]
@@ -117,12 +122,13 @@ def sugly(searchquerynew):
     return [elem[0] for elem in sorted_all_documents]
 
 
-#@app.teardown_appcontext
+# @app.teardown_appcontext
 # def shutdown_session(exception=None):
 #    db_session.remove()
 
 # Index-Seite.
-# Stellt die Startseite dar, hier sollte aber auch direkt die Eingabe in das Suchfeld weiterverarbeitet werden, damit dann, je nach gewählter Suche,
+# Stellt die Startseite dar, hier sollte aber auch direkt die Eingabe in
+# das Suchfeld weiterverarbeitet werden, damit dann, je nach gewählter Suche,
 # das Template für Smonky-Normal, oder Smonky-Ugly ausgegeben werden kann.
 
 @app.route('/', methods=["GET", "POST"])
@@ -146,7 +152,7 @@ def normalsearch():
         searchquerynew = process_query(searchqueryreplaced)
         results = select(searchquerynew)
         return render_template('index.jinja', form=form,
-                               results=results, sugly=False, debug=DEBUG)
+                               results=results, sugly=False, debug=config.DEBUG)
     else:
         return redirect('/')
 
@@ -160,7 +166,7 @@ def suglysearch():
         searchquerynew = process_query(searchqueryreplaced)
         results = sugly(searchquerynew)
         return render_template('index.jinja', form=form,
-                               results=results, sugly=True, debug=DEBUG)
+                               results=results, sugly=True, debug=config.DEBUG)
     else:
         return redirect('/')
 

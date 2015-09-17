@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from math import log # log for idf and wdf calculation
+from math import log  # log for idf and wdf calculation
 
 from nltk.corpus import stopwords   # stopwords to detect language
 from nltk import wordpunct_tokenize  # function to split up our words
@@ -11,7 +11,7 @@ from sqlalchemy import create_engine, func, distinct
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 from config import DB_URI, DEBUG
-from models import Wordlist, ConsistsOf
+from models import Wordlist, ConsistsOf, Document
 
 
 # ----------------------------------------------------------------------

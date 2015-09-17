@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 from scrapy.contrib.spiders import CrawlSpider, Rule
 from scrapy.contrib.linkextractors import LinkExtractor
-from config import TXT_PATH
 from basic_crawler.items import Website
 from link_collector import get_websites_from_txt
+
+from config import TXT_PATH
 
 
 class Website_spider(CrawlSpider):

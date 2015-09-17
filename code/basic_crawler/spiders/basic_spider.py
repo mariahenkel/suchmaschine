@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 from scrapy.contrib.spiders import CrawlSpider
-from config import TOP1M_LIMIT
 from basic_crawler.items import Website
 from link_collector import get_top_1million_websites
+
+from config import TOP1M_LIMIT
 
 
 class Website_spider(CrawlSpider):

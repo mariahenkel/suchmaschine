@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import (Column, Boolean, Integer, Text,
-                        ForeignKey, String, Float, LargeBinary)
+                        ForeignKey, String, Float)
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
