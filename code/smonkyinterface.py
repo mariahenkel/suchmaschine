@@ -126,26 +126,27 @@ def sugly(searchquerynew):
 # def shutdown_session(exception=None):
 #    db_session.remove()
 
-# Index-Seite.
-# Stellt die Startseite dar, hier sollte aber auch direkt die Eingabe in
-# das Suchfeld weiterverarbeitet werden, damit dann, je nach gewählter Suche,
-# das Template für Smonky-Normal, oder Smonky-Ugly ausgegeben werden kann.
+# Index
+# Represents the cover page of the search engine smonky. 
+# Search keywords can be entered into the search field. 
+# Therby a user can chose between the two search modes: 
+# “Normal Search” (for a standart search) or “Let’s be crazy!” (for a unitability search).
+# Redirects either to the "/normal" route or to the "/sugly" route.
 
 @app.route('/', methods=["GET", "POST"])
 def index():
     form = SearchQuery()
     return render_template('index.jinja', form=form)
 
-
+# Output impressum template.
 @app.route('/impressum')
 def impressum():
     return render_template('impressum.jinja')
 
-
+# Output normal-search template plus search results.
 @app.route('/normal', methods=["GET", "POST"])
 def normalsearch():
     form = SearchQuery()
-#    results = []
     if form.validate_on_submit():
         searchquery = form.queryfield.data.encode('utf-8').split()
         searchqueryreplaced = replace_char(searchquery)
@@ -157,7 +158,7 @@ def normalsearch():
     else:
         return redirect('/')
 
-
+# Output unusability-search template plus search results.
 @app.route('/sugly', methods=["GET", "POST"])
 def suglysearch():
     form = SearchQuery()
@@ -170,12 +171,6 @@ def suglysearch():
                                results=results, sugly=True, debug=config.DEBUG)
     else:
         return redirect('/')
-
-
-@app.route('/info')
-def info():
-    return render_template('info.jinja')
-
 
 if __name__ == "__main__":
     app.run(debug=True)
