@@ -152,7 +152,8 @@ def normalsearch():
         searchquerynew = process_query(searchqueryreplaced)
         results = select(searchquerynew)
         return render_template('index.jinja', form=form,
-                               results=results, sugly=False, debug=config.DEBUG)
+                               results=results, sugly=False,
+                               debug=config.DEBUG)
     else:
         return redirect('/')
 
