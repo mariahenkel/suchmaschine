@@ -1,16 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import operator  # xxx
-
+import operator  
 from flask import Flask, render_template, redirect
 from forms import SearchQuery
-# meaning of xxx?
 
-from nltk.corpus import stopwords  # Stoppwortliste xxx
-from nltk.stem import PorterStemmer  # Stemmer xxx
+from nltk.corpus import stopwords  # Stoppwortliste
+from nltk.stem import PorterStemmer  # Stemmer
 from models import Document, ConsistsOf, Wordlist
-from sqlalchemy import create_engine  # xxx
-from sqlalchemy.orm import sessionmaker  # xxx
+from sqlalchemy import create_engine  
+from sqlalchemy.orm import sessionmaker  
 
 import config
 
@@ -20,12 +18,12 @@ app.debug = True
 app.config.from_object(config)
 
 # sqlalchemy session
-some_engine = create_engine(config.DB_URI, echo=config.DEBUG)  # xxx
-Session = sessionmaker(bind=some_engine)  # xxx
+some_engine = create_engine(config.DB_URI, echo=config.DEBUG)  
+Session = sessionmaker(bind=some_engine)  
 session = Session()
 
 
-# Ersetzen von Satzzeichen xxx
+# replacing puctuatuion marks from the query
 def replace_char(searchquery):
     replacedquery = []
     char_dict = {'?': '', '!': '', '-': '', ';': '', ':': '', '.': '',
@@ -42,9 +40,7 @@ def replace_char(searchquery):
         replacedquery.append(element)
     return replacedquery
 
-# Stemming der Suchanfrage und entfernen von Stoppworten xxx
-
-
+# stemming and removing stop words from the query
 def process_query(searchqueryreplaced):
     stop = stopwords.words('english')
     stemmer = PorterStemmer()
@@ -61,9 +57,8 @@ def process_query(searchqueryreplaced):
             print e
     return newquery
 
-# xxx
-
-
+# comparing the words in the query with the words of all documents.
+# calculation of the overall score for one document with the help of wdf and idf.
 def select(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
@@ -91,7 +86,8 @@ def select(searchquerynew):
             reverse=True)
     return [elem[0] for elem in sorted_all_documents]
 
-
+# comparing the words in the query with the words of all documents.
+# calculation of the overall score for one document with the help of wdf, idf and the unusability score.
 def sugly(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
