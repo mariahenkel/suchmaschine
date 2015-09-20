@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from defaultconfig import DB_URI, DEBUG
 Base = declarative_base()
 
+# Definition of database classes 
 # Class Document
 class Document(Base):
     __tablename__ = "document"
