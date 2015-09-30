@@ -53,17 +53,19 @@
     <h3>Results</h3>
 
         {% for result in results %}
+        <a href="{{ result.url | safe }}">
 			<div class="panel panel-warning">
 				<div class="panel-heading">
 				<h3 class="panel-title">{{ result.title | safe }}</h3>
 			</div>
 				<div class="panel-body">
-					<a href="{{ result.url | safe }}">{{ result.url | safe }}</a>
+					{{ result.url | safe }}
                     {% if debug %}
                     <p>IDF: {{result.idf}} | WDF : {{result.wdf}} | UR: {{result.ur}}</p>
                     {% endif %}
 				</div>
 			</div>
+            </a>
         {% endfor %}
 
 {% endif %}
