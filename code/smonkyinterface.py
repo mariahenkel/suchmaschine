@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import operator  
+import operator
 from flask import Flask, render_template, redirect
 from forms import SearchQuery
 
 from nltk.corpus import stopwords  # Stoppwortliste
 from nltk.stem import PorterStemmer  # Stemmer
 from models import Document, ConsistsOf, Wordlist
-from sqlalchemy import create_engine  
-from sqlalchemy.orm import sessionmaker  
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 import config
 
@@ -18,8 +18,8 @@ app.debug = True
 app.config.from_object(config)
 
 # sqlalchemy session
-some_engine = create_engine(config.DB_URI, echo=config.DEBUG)  
-Session = sessionmaker(bind=some_engine)  
+some_engine = create_engine(config.DB_URI, echo=config.DEBUG)
+Session = sessionmaker(bind=some_engine)
 session = Session()
 
 
@@ -41,6 +41,8 @@ def replace_char(searchquery):
     return replacedquery
 
 # stemming and removing stop words from the query
+
+
 def process_query(searchqueryreplaced):
     stop = stopwords.words('english')
     stemmer = PorterStemmer()
@@ -58,7 +60,10 @@ def process_query(searchqueryreplaced):
     return newquery
 
 # comparing the words in the query with the words of all documents.
-# calculation of the overall score for one document with the help of wdf and idf.
+# calculation of the overall score for one document with the help of wdf
+# and idf.
+
+
 def select(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
@@ -87,7 +92,10 @@ def select(searchquerynew):
     return [elem[0] for elem in sorted_all_documents]
 
 # comparing the words in the query with the words of all documents.
-# calculation of the overall score for one document with the help of wdf, idf and the unusability score.
+# calculation of the overall score for one document with the help of wdf,
+# idf and the unusability score.
+
+
 def sugly(searchquerynew):
     all_documents = {}
     for element in searchquerynew:
@@ -123,9 +131,9 @@ def sugly(searchquerynew):
 #    db_session.remove()
 
 # Index
-# Represents the cover page of the search engine smonky. 
-# Search keywords can be entered into the search field. 
-# Therby a user can chose between the two search modes: 
+# Represents the cover page of the search engine smonky.
+# Search keywords can be entered into the search field.
+# Therby a user can chose between the two search modes:
 # “Normal Search” (for a standart search) or “Let’s be crazy!” (for a unitability search).
 # Redirects either to the "/normal" route or to the "/sugly" route.
 
@@ -135,11 +143,15 @@ def index():
     return render_template('index.jinja', form=form)
 
 # Output impressum template.
+
+
 @app.route('/impressum')
 def impressum():
     return render_template('impressum.jinja')
 
 # Output normal-search template plus search results.
+
+
 @app.route('/normal', methods=["GET", "POST"])
 def normalsearch():
     form = SearchQuery()
@@ -155,6 +167,8 @@ def normalsearch():
         return redirect('/')
 
 # Output unusability-search template plus search results.
+
+
 @app.route('/sugly', methods=["GET", "POST"])
 def suglysearch():
     form = SearchQuery()
