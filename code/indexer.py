@@ -52,8 +52,11 @@ def get_language(input_text):
 
 
 def index_document(document):
-    document.language = get_language(document.html_document)[:3]
-    second_session.add(document)
+
+    doc = second_session.query(Document).filter(
+        Document.id == document.id).first()
+    doc.language = get_language(document.html_document)[:3]
+    second_session.add(doc)
     second_session.commit()
     if document.language == "eng":
         soup = BeautifulSoup(document.html_document)
