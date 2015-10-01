@@ -10,14 +10,17 @@ from sqlalchemy.orm import sessionmaker
 from defaultconfig import DB_URI, DEBUG
 Base = declarative_base()
 
-# Definition of database classes 
+# Definition of database classes
 # Class Document
+
+
 class Document(Base):
     __tablename__ = "document"
     id = Column(Integer, primary_key=True)
     url = Column(String(2000))
     title = Column(Text)
     ranking = Column(Float)
+    language = Column(String(3))
     html_document = Column(Text)
     number_of_gifs = Column(Integer)
     backgroundmusic = Column(Boolean)
@@ -39,6 +42,8 @@ class Document(Base):
     wordlists = relationship("ConsistsOf", backref="document")
 
 # Class Wordlist
+
+
 class Wordlist(Base):
     __tablename__ = "wordlist"
     id = Column(Integer, primary_key=True)
@@ -49,6 +54,8 @@ class Wordlist(Base):
     idf = Column(Float)
 
 # Class/Relation ConsistsOf
+
+
 class ConsistsOf(Base):
     __tablename__ = "consists_of"
     sentenceno = Column(Integer)

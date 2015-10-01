@@ -380,6 +380,7 @@ print "getting all websites"
 websites = session.query(
     Document.html_document, Document.url, Document.overall_score)\
     .filter(~Document.title.contains('LinkedIn'))\
+    .filter(Document.language == 'eng')\
     .order_by((Document.id.desc())).yield_per(100)
 num_of_websites = session.query(Document).count()
 

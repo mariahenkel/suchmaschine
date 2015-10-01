@@ -52,8 +52,12 @@ def get_language(input_text):
 
 
 def index_document(document):
-    if get_language(document.html_document) == "english":
+    document.language = get_language(document.html_document)[:3]
+    session.add(document)
+    session.commit()
+    if document.language == "eng":
         soup = BeautifulSoup(document.html_document)
+
         # remove javascript
         for s in soup('script'):
             s.extract()

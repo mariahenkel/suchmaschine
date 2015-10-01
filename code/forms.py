@@ -4,6 +4,8 @@ from wtforms.fields import TextField, SubmitField
 from wtforms.validators import DataRequired
 
 # Defines the queryfield and submit buttons.
+
+
 class SearchQuery(Form):
     queryfield = TextField('Query', validators=[DataRequired()])
     normalsearch = SubmitField('Add Smonky-Normal')
