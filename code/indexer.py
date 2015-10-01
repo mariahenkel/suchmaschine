@@ -143,10 +143,14 @@ def calculate_idf():
 if __name__ == "__main__":
     # get all documents from the db
     print "#### indexing all words from all documents"
+    counter = 0
     html_document = session.query(
         Document).yield_per(100)
     # index all of them
     for element in html_document:
+        counter += 1
+        if counter % 100 == 0:
+            print 'indexed {0} documents so far'.format(counter)
         index_document(element)
     print "#### calculating IDF for all words"
     # calculate idf
