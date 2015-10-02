@@ -69,6 +69,7 @@ def select(searchquerynew):
     for element in searchquerynew:
         results = session.query(Document, Wordlist, ConsistsOf).outerjoin(
             ConsistsOf).outerjoin(Wordlist)\
+            .filter(Document.language == 'eng')\
             .filter(Wordlist.word == element).all()
         for result in results:
             website = result[0]
@@ -101,6 +102,7 @@ def sugly(searchquerynew):
     for element in searchquerynew:
         results = session.query(Document, Wordlist, ConsistsOf).outerjoin(
             ConsistsOf).outerjoin(Wordlist)\
+            .filter(Document.language == 'eng')\
             .filter(Wordlist.word == element).all()
         for result in results:
             website = result[0]
