@@ -273,9 +273,7 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     flash_max = 6
     popups_max = 7
     counter_max = 3
-
-    # w3c_max never used
-    # w3c_max = 5
+    w3c_max = 5
 
     bad_fonts_value = bad_fonts_max if bad_fonts else 0
     bad_colors_value = bad_colors_max if bad_colors > bad_colors_max\
@@ -297,12 +295,11 @@ def get_factor(bad_fonts, bad_colors, fonts, marquee, gifs, bad_structure,
     flash_value = flash_max if flash else 0
     popups_value = popups_max if popups else 0
     counter_value = counter_max if counter else 0
-    # not used, why?
-    # w3c_value = w3c_max if float(w3) / 20 > w3c_max else float(w3) / 20
+    w3c_value = w3c_max if float(w3) / 20 > w3c_max else float(w3) / 20
     score = bad_fonts_value + bad_colors_value + font_amount_value + \
         marquee_value + gif_value + bad_structure_value + guestbook_value + \
         phrases_value + dead_links_value + audio_value + audio_loop_value + \
-        images_value + flash_value + popups_value + counter_value
+        images_value + flash_value + popups_value + counter_value + w3c_value
     return score
 
 
